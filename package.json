@@ -38,7 +38,9 @@
     "perf:build": "node scripts/perf/build.mjs",
     "perf:run": "node scripts/perf/run.mjs",
     "perf:compare": "node scripts/perf/compare.mjs",
-    "perf:test": "node --test scripts/perf/report.test.mjs"
+    "perf:test": "node --test scripts/perf/report.test.mjs",
+    "subscriptions:build": "tsc --noEmit -p subscription-manager/tsconfig.json && vite build --config subscription-manager/vite.config.ts",
+    "subscriptions:start": "bash scripts/start-subscription-manager.sh"
   },
   "dependencies": {
     "@dnd-kit/collision": "^0.5.0",

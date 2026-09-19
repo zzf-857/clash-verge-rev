@@ -17,3 +17,11 @@ target
 .vfox
 .claude
 .zed
+
+dist-subscription-manager
+.subscription-workspace
+.subscription-original
+AGENT_HANDOFF.md
+.env
+.env.*
+*.log

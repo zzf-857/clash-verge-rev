@@ -1,0 +1,13 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "types": ["vite/client", "node"]
+  },
+  "include": [
+    "./main.tsx",
+    "./vite.config.ts",
+    "../src/components/profile/subscription-manager.tsx",
+    "../src/components/profile/subscription-manager-text.ts",
+    "../src/utils/subscription-config.ts"
+  ]
+}

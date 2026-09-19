@@ -38,6 +38,7 @@ import {
   ProfileViewer,
   type ProfileViewerRef,
 } from '@/components/profile/profile-viewer'
+import { SubscriptionManagerButton } from '@/components/profile/subscription-manager-button'
 import { ConfigViewer } from '@/components/setting/mods/config-viewer'
 import { useListen } from '@/hooks/use-listen'
 import { fetchProfilesIntoCache, useProfiles } from '@/hooks/use-profiles'
@@ -712,6 +713,7 @@ const ProfilePage = () => {
       contentStyle={{ height: '100%' }}
       header={
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <SubscriptionManagerButton />
           {!batchMode ? (
             <>
               {/* Batch mode toggle button */}
