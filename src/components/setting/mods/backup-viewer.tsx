@@ -107,7 +107,7 @@ export function BackupViewer({ ref }: { ref?: Ref<DialogRef> }) {
     [setBusyAction],
   )
 
-  const isLocalBusy = busyAction === 'local' || localImporting
+  const isLocalBusy = busyAction !== null || localImporting
 
   return (
     <BaseDialog
@@ -160,7 +160,7 @@ export function BackupViewer({ ref }: { ref?: Ref<DialogRef> }) {
                       variant="contained"
                       size="small"
                       loading={busyAction === 'local'}
-                      disabled={localImporting}
+                      disabled={isLocalBusy}
                       onClick={() => handleBackup('local')}
                     >
                       {t('settings.modals.backup.actions.backup')}
@@ -179,7 +179,7 @@ export function BackupViewer({ ref }: { ref?: Ref<DialogRef> }) {
                       variant="text"
                       size="small"
                       loading={localImporting}
-                      disabled={busyAction === 'local'}
+                      disabled={isLocalBusy}
                       onClick={() => handleImport()}
                     >
                       {t('settings.modals.backup.actions.importBackup')}
@@ -196,6 +196,7 @@ export function BackupViewer({ ref }: { ref?: Ref<DialogRef> }) {
                       variant="contained"
                       size="small"
                       loading={busyAction === 'webdav'}
+                      disabled={isLocalBusy}
                       onClick={() => handleBackup('webdav')}
                     >
                       {t('settings.modals.backup.actions.backup')}
@@ -204,6 +205,7 @@ export function BackupViewer({ ref }: { ref?: Ref<DialogRef> }) {
                       key="history"
                       variant="outlined"
                       size="small"
+                      disabled={isLocalBusy}
                       onClick={() => openHistory('webdav')}
                     >
                       {t('settings.modals.backup.actions.viewHistory')}
@@ -212,6 +214,7 @@ export function BackupViewer({ ref }: { ref?: Ref<DialogRef> }) {
                       key="configure"
                       variant="text"
                       size="small"
+                      disabled={isLocalBusy}
                       onClick={() => setWebdavDialogOpen(true)}
                     >
                       {t('settings.modals.backup.manual.configureWebdav')}

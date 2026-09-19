@@ -9,6 +9,7 @@ use smartstring::alias::String;
 
 #[tauri::command]
 pub async fn save_webdav_config(url: String, username: String, password: String) -> CmdResult<()> {
+    let _write = Config::lock_config_write().await;
     let patch = IVerge {
         webdav_url: Some(url),
         webdav_username: Some(username),
@@ -40,8 +41,11 @@ pub async fn delete_webdav_backup(filename: String) -> CmdResult<()> {
 }
 
 #[tauri::command]
-pub async fn restore_webdav_backup(filename: String) -> CmdResult<()> {
-    feat::restore_webdav_backup(filename)
+pub async fn restore_webdav_backup(
+    filename: String,
+    mode: Option<crate::core::backup_restore::RestoreMode>,
+) -> CmdResult<String> {
+    feat::restore_webdav_backup(filename, mode.unwrap_or_default())
         .await
         .map_err(|error| super::proxy_aware_error(&error))
 }

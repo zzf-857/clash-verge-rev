@@ -4,6 +4,8 @@ import { useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { updateProxyProvider } from 'tauri-plugin-mihomo-api'
 
+import { type DialogRef } from '@/components/base'
+import { BackupViewer } from '@/components/setting/mods/backup-viewer'
 import { useAppRefreshers, useProxiesData } from '@/providers/app-data-context'
 import {
   getProfiles,
@@ -26,6 +28,7 @@ import { subscriptionText } from './subscription-manager-text'
 export function SubscriptionManagerButton() {
   const { i18n } = useTranslation()
   const text = subscriptionText[i18n.language.startsWith('zh') ? 'zh' : 'en']
+  const backupRef = useRef<DialogRef>(null)
   const [open, setOpen] = useState(false)
   const { proxyView } = useProxiesData()
   const { refreshProxy } = useAppRefreshers()
@@ -110,6 +113,14 @@ export function SubscriptionManagerButton() {
       <Button
         variant="outlined"
         size="small"
+        onClick={() => backupRef.current?.open()}
+      >
+        {text.backup}
+      </Button>
+      <BackupViewer ref={backupRef} />
+      <Button
+        variant="outlined"
+        size="small"
         startIcon={<StorageRounded />}
         onClick={() => setOpen(true)}
       >
@@ -121,7 +132,13 @@ export function SubscriptionManagerButton() {
         fullWidth
         maxWidth="lg"
       >
-        {open && <SubscriptionManager api={api} language={i18n.language} />}
+        {open && (
+          <SubscriptionManager
+            api={api}
+            language={i18n.language}
+            onOpenBackup={() => backupRef.current?.open()}
+          />
+        )}
         <DialogActions>
           <Button onClick={() => setOpen(false)}>{text.close}</Button>
         </DialogActions>

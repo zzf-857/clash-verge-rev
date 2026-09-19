@@ -14,6 +14,7 @@ import { tmpdir } from 'node:os'
 import path from 'node:path'
 import { test } from 'node:test'
 import { fileURLToPath } from 'node:url'
+
 import { dump, load } from 'js-yaml'
 
 const repo = fileURLToPath(new URL('..', import.meta.url))
@@ -125,11 +126,17 @@ test('isolated manager authenticates requests, detects stale edits and restores 
     const port = reservation.address().port
     await new Promise((resolve) => reservation.close(resolve))
     const origin = 'http://127.0.0.1:' + port
+    const validator = path.join(root, 'mock-validator')
+    await writeFile(validator, '#!/bin/sh\nexit 0\n', { mode: 0o700 })
     child = spawn(
       process.execPath,
       [path.join(root, 'scripts/subscription-manager.mjs')],
       {
-        env: { ...process.env, SUBSCRIPTION_MANAGER_PORT: String(port) },
+        env: {
+          ...process.env,
+          SUBSCRIPTION_MANAGER_PORT: String(port),
+          MIHOMO_BIN: validator,
+        },
         stdio: ['ignore', 'pipe', 'pipe'],
       },
     )

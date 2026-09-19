@@ -1,6 +1,9 @@
 export const subscriptionText = {
   zh: {
     title: '订阅管理',
+    backup: 'WebDAV 备份/同步',
+    backupDesktop:
+      '请打开 Clash Verge 桌面客户端，在订阅页使用 WebDAV 备份/同步；独立网页不支持此功能。',
     subtitle: '把订阅、刷新和应用分流放在一起。',
     active: '当前配置',
     sources: '订阅来源',
@@ -69,6 +72,9 @@ export const subscriptionText = {
   },
   en: {
     title: 'Subscriptions',
+    backup: 'WebDAV backup / sync',
+    backupDesktop:
+      'Open the Clash Verge desktop app to use WebDAV backup / sync. This is not available in the standalone browser.',
     subtitle: 'Subscriptions, updates and app routing in one place.',
     active: 'Active profile',
     sources: 'Sources',

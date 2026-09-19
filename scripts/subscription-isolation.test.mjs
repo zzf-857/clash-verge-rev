@@ -1,4 +1,6 @@
 import assert from 'node:assert/strict'
+import { spawn } from 'node:child_process'
+import dgram from 'node:dgram'
 import {
   mkdtemp,
   mkdir,
@@ -10,14 +12,12 @@ import {
   copyFile,
   access,
 } from 'node:fs/promises'
-import { spawn } from 'node:child_process'
-import { fileURLToPath } from 'node:url'
-import { setTimeout as delay } from 'node:timers/promises'
 import net from 'node:net'
-import dgram from 'node:dgram'
 import os from 'node:os'
 import path from 'node:path'
 import test from 'node:test'
+import { setTimeout as delay } from 'node:timers/promises'
+import { fileURLToPath } from 'node:url'
 
 async function fixture(t) {
   const configDir = await mkdtemp(
@@ -78,10 +78,9 @@ async function launcherFixture(t, { unsafe = false, ready = false } = {}) {
     new URL('./start-subscription-manager.sh', import.meta.url),
     'utf8',
   )
-  // Replace the absolute executable in the copy: tests can never invoke a real core.
   await writeFile(
     path.join(root, 'scripts/start-subscription-manager.sh'),
-    original.replaceAll('/usr/bin/verge-mihomo', mock),
+    original,
   )
   await copyFile(
     new URL('./subscription-isolation.mjs', import.meta.url),
@@ -108,7 +107,12 @@ async function launcherFixture(t, { unsafe = false, ready = false } = {}) {
         [path.join(root, 'scripts/start-subscription-manager.sh')],
         {
           detached: true,
-          env: { ...process.env, SUBSCRIPTION_STARTUP_TIMEOUT: '1', ...env },
+          env: {
+            ...process.env,
+            SUBSCRIPTION_STARTUP_TIMEOUT: '1',
+            MIHOMO_BIN: mock,
+            ...env,
+          },
           stdio: ['ignore', 'pipe', 'pipe'],
         },
       )
@@ -161,9 +165,8 @@ test('launcher refuses occupied manager, proxy, DNS ports and existing socket wi
       protocol === 'tcp' ? net.createServer() : dgram.createSocket('udp4')
     await new Promise((resolve, reject) => {
       listener.once('error', reject)
-      protocol === 'tcp'
-        ? listener.listen(port, '127.0.0.1', resolve)
-        : listener.bind(port, '127.0.0.1', resolve)
+      if (protocol === 'tcp') listener.listen(port, '127.0.0.1', resolve)
+      else listener.bind(port, '127.0.0.1', resolve)
     })
     try {
       const fixture = await launcherFixture(t)

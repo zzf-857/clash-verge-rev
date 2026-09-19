@@ -2,6 +2,7 @@
 set -euo pipefail
 project_root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
 workspace="$project_root/.subscription-workspace"
+export MIHOMO_BIN="${MIHOMO_BIN:-verge-mihomo}"
 startup_timeout="${SUBSCRIPTION_STARTUP_TIMEOUT:-5}"
 [[ "$startup_timeout" =~ ^[1-9][0-9]?$ ]] || { echo 'Invalid startup timeout.' >&2; exit 1; }
 if [[ ! -f "$workspace/clash-verge.yaml" || ! -f "$project_root/dist-subscription-manager/index.html" ]]; then
@@ -41,7 +42,7 @@ cleanup() {
 trap cleanup EXIT
 trap 'exit 130' INT
 trap 'exit 143' TERM
-/usr/bin/verge-mihomo -d "$workspace" -f "$workspace/clash-verge.yaml" -ext-ctl-unix "$workspace/mihomo.sock" >"$workspace/core.log" 2>&1 &
+"$MIHOMO_BIN" -d "$workspace" -f "$workspace/clash-verge.yaml" -ext-ctl-unix "$workspace/mihomo.sock" >"$workspace/core.log" 2>&1 &
 core_pid=$!
 ready=false
 for ((attempt=0; attempt<startup_timeout*10; attempt++)); do

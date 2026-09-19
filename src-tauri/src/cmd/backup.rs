@@ -19,8 +19,11 @@ pub async fn delete_local_backup(filename: String) -> CmdResult<()> {
 }
 
 #[tauri::command]
-pub async fn restore_local_backup(filename: String) -> CmdResult<()> {
-    feat::restore_local_backup(filename)
+pub async fn restore_local_backup(
+    filename: String,
+    mode: Option<crate::core::backup_restore::RestoreMode>,
+) -> CmdResult<String> {
+    feat::restore_local_backup(filename, mode.unwrap_or_default())
         .await
         .map_err(|error| super::proxy_aware_error(&error))
 }

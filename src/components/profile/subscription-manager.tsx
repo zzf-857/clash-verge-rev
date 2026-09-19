@@ -60,9 +60,11 @@ export interface SubscriptionManagerApi {
 export function SubscriptionManager({
   api,
   language = 'zh',
+  onOpenBackup,
 }: {
   api: SubscriptionManagerApi
   language?: string
+  onOpenBackup?: () => void
 }) {
   const text = subscriptionText[language.startsWith('zh') ? 'zh' : 'en']
   const [data, setData] = useState<SubscriptionSnapshot | null>(null)
@@ -153,6 +155,15 @@ export function SubscriptionManager({
 
   return (
     <Box sx={{ maxWidth: 1120, mx: 'auto', p: { xs: 2, md: 4 } }}>
+      {onOpenBackup ? (
+        <Button onClick={onOpenBackup} disabled={busy}>
+          {text.backup}
+        </Button>
+      ) : (
+        <Alert severity="info" sx={{ mb: 2 }}>
+          <strong>{text.backup}</strong> — {text.backupDesktop}
+        </Alert>
+      )}
       <Stack
         direction={{ xs: 'column', sm: 'row' }}
         spacing={2}

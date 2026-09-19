@@ -3,6 +3,10 @@ import DownloadRounded from '@mui/icons-material/DownloadRounded'
 import RefreshRounded from '@mui/icons-material/RefreshRounded'
 import RestoreRounded from '@mui/icons-material/RestoreRounded'
 import {
+  Alert,
+  FormControlLabel,
+  Radio,
+  RadioGroup,
   Box,
   Button,
   IconButton,
@@ -35,7 +39,7 @@ import {
   restoreLocalBackup,
   restoreWebDavBackup,
 } from '@/services/cmds'
-import { showNotice } from '@/services/notice-service'
+import { errorDetail, showNotice } from '@/services/notice-service'
 import {
   buildWebdavSignature,
   getWebdavStatus,
@@ -80,8 +84,14 @@ export const BackupHistoryViewer = ({
   onPageChange,
   onClose,
 }: BackupHistoryViewerProps) => {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
+  const chinese = i18n.language.startsWith('zh')
+  const [restoreMode, setRestoreMode] = useState<'cross_device' | 'full'>(
+    'cross_device',
+  )
+  const [recoveryPath, setRecoveryPath] = useState('')
   const { verge } = useVerge()
+  const [listError, setListError] = useState('')
   const [rows, setRows] = useState<BackupRow[]>([])
   const [loading, setLoading] = useState(false)
   const [isRestoring, setIsRestoring] = useState(false)
@@ -151,6 +161,7 @@ export const BackupHistoryViewer = ({
       }
 
       setLoading(true)
+      setListError('')
       try {
         const list = isLocal
           ? await listLocalBackup()
@@ -172,7 +183,7 @@ export const BackupHistoryViewer = ({
         if (!isLocal) {
           setWebdavStatus(webdavSignature, 'failed')
         }
-        console.error(error)
+        setListError(errorDetail(error))
         setRows([])
         showNotice.error(error)
       } finally {
@@ -214,6 +225,7 @@ export const BackupHistoryViewer = ({
 
   const handleRestore = (filename: string) => {
     if (isRestoring || isRestarting) return
+    setRestoreMode('cross_device')
     setPendingConfirmation({ action: 'restore', filename, source })
   }
 
@@ -236,9 +248,9 @@ export const BackupHistoryViewer = ({
         await fetchRows()
       } else {
         if (actionIsLocal) {
-          await restoreLocalBackup(filename)
+          setRecoveryPath(await restoreLocalBackup(filename, restoreMode))
         } else {
-          await restoreWebDavBackup(filename)
+          setRecoveryPath(await restoreWebDavBackup(filename, restoreMode))
         }
         setPendingConfirmation(null)
         showNotice.success('settings.modals.backup.messages.restoreSuccess')
@@ -306,6 +318,14 @@ export const BackupHistoryViewer = ({
       <Box sx={{ position: 'relative', minHeight: 320 }}>
         <BaseLoadingOverlay isLoading={isBusy} />
         <Stack spacing={2}>
+          {recoveryPath && (
+            <Alert severity="info">
+              {chinese
+                ? '本地恢复点（含私人配置，请勿上传）：'
+                : 'Local recovery point (private; do not upload): '}
+              {recoveryPath}
+            </Alert>
+          )}
           <Stack
             direction="row"
             sx={{ alignItems: 'center', justifyContent: 'space-between' }}
@@ -341,6 +361,7 @@ export const BackupHistoryViewer = ({
             {summary}
           </Typography>
 
+          {listError && <Alert severity="error">{listError}</Alert>}
           <List
             disablePadding
             subheader={
@@ -352,13 +373,19 @@ export const BackupHistoryViewer = ({
             {pagedRows.length === 0 ? (
               <ListItem>
                 <ListItemText
-                  primary={t('settings.modals.backup.history.empty') || ''}
+                  primary={
+                    listError ||
+                    (shouldSkipWebDav
+                      ? t('settings.modals.backup.manual.webdav')
+                      : t('settings.modals.backup.history.empty'))
+                  }
                 />
               </ListItem>
             ) : (
               pagedRows.map((row) => (
                 <ListItem key={`${row.platform}-${row.filename}`} divider>
                   <ListItemText
+                    slotProps={{ secondary: { component: 'div' } }}
                     primary={
                       <Typography
                         variant="body2"
@@ -396,6 +423,9 @@ export const BackupHistoryViewer = ({
                           <IconButton
                             size="small"
                             disabled={isBusy}
+                            aria-label={t(
+                              'settings.modals.backup.actions.deleteBackup',
+                            )}
                             onClick={() => handleDelete(row.filename)}
                           >
                             <DeleteOutlined fontSize="small" />
@@ -403,6 +433,9 @@ export const BackupHistoryViewer = ({
                           <IconButton
                             size="small"
                             disabled={isBusy}
+                            aria-label={t(
+                              'settings.modals.backup.actions.restoreBackup',
+                            )}
                             onClick={() => handleRestore(row.filename)}
                           >
                             <RestoreRounded fontSize="small" />
@@ -463,6 +496,51 @@ export const BackupHistoryViewer = ({
         <Typography variant="body2" sx={{ wordBreak: 'break-word' }}>
           {confirmMessage}
         </Typography>
+        {pendingConfirmation?.action === 'restore' && (
+          <Stack spacing={1} sx={{ mt: 2 }}>
+            <RadioGroup
+              value={restoreMode}
+              onChange={(_, value) =>
+                setRestoreMode(value as 'cross_device' | 'full')
+              }
+            >
+              <FormControlLabel
+                disabled={isConfirming}
+                value="cross_device"
+                control={<Radio />}
+                label={
+                  chinese
+                    ? '跨设备恢复（默认保护本机网络）'
+                    : 'Cross-device restore (protect this device)'
+                }
+              />
+              <FormControlLabel
+                disabled={isConfirming}
+                value="full"
+                control={<Radio />}
+                label={
+                  chinese
+                    ? '完整覆盖（仅用于兼容设备）'
+                    : 'Full overwrite (compatible devices only)'
+                }
+              />
+            </RadioGroup>
+            <Alert severity="warning">
+              {restoreMode === 'cross_device'
+                ? chinese
+                  ? '覆盖订阅文件和索引，保留本机 Clash、Verge 和 DNS 设置。脚本、网卡、网络设置或外部文件路径无法安全迁移时会拒绝恢复，请先在来源设备检查。'
+                  : 'Replace profiles and their index; keep this device’s Clash, Verge and DNS settings. Scripts, network settings and file paths that cannot be migrated safely are rejected; review them on the source device first.'
+                : chinese
+                  ? '覆盖全部订阅、provider 定义、组和规则、Merge/Script、索引、DNS、Clash 和 Verge 设置（包括 TUN、端口、系统代理和网卡），可能中断网络。目标 WebDAV 凭据保留。'
+                  : 'Overwrite profiles, provider definitions, groups/rules, Merge/Script, index, DNS, Clash and Verge settings including TUN, ports, system proxy and interfaces. Network access may be interrupted. Target WebDAV credentials are retained.'}
+            </Alert>
+            <Typography variant="body2">
+              {chinese
+                ? '这是覆盖，不是合并。未归档的外部文件和缓存不会恢复。先校验和暂存，再创建应用目录下的 restore-point 恢复点；文件提交失败会回滚，回滚失败会单独提示。成功后自动重启应用，重启前运行内核保持不变；重启后的网络兼容性不在文件回滚范围内。'
+                : 'This overwrites rather than merges. External files and caches outside the archive are not restored. Validation and staging precede a local restore-point directory. Failed file commits roll back; rollback failures are reported separately. The app restarts after success; the running core remains unchanged until restart. Network compatibility after restart is outside the file transaction.'}
+            </Typography>
+          </Stack>
+        )}
         {pendingConfirmation?.filename && (
           <Typography
             variant="caption"

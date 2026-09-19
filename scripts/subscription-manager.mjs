@@ -1,5 +1,5 @@
-import { createHash, randomBytes, randomUUID } from 'node:crypto'
 import { execFile } from 'node:child_process'
+import { createHash, randomBytes, randomUUID } from 'node:crypto'
 import { readFile, writeFile, mkdir, rename, realpath } from 'node:fs/promises'
 import http from 'node:http'
 import path from 'node:path'
@@ -8,14 +8,14 @@ import { promisify } from 'node:util'
 
 import { load } from 'js-yaml'
 
-import { assertIsolatedRuntime } from './subscription-isolation.mjs'
-
 import {
   editSubscription,
   inspectSubscriptions,
   removeSubscription,
   SubscriptionConfigError,
 } from '../src/utils/subscription-config.ts'
+
+import { assertIsolatedRuntime } from './subscription-isolation.mjs'
 
 const root = fileURLToPath(new URL('..', import.meta.url))
 const configDir = path.join(root, '.subscription-workspace')
@@ -106,7 +106,7 @@ async function change(body, remove = false) {
   await writeFile(stage, runtime, { mode: 0o600 })
   try {
     await execute(
-      '/usr/bin/verge-mihomo',
+      process.env.MIHOMO_BIN || 'verge-mihomo',
       ['-t', '-d', configDir, '-f', stage],
       { timeout: 60000, maxBuffer: 1024 * 1024 },
     )

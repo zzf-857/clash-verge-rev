@@ -348,12 +348,18 @@ export async function deleteLocalBackup(filename: string) {
   return invoke<void>('delete_local_backup', { filename })
 }
 
-export async function restoreWebDavBackup(filename: string) {
-  return invoke<void>('restore_webdav_backup', { filename })
+export async function restoreWebDavBackup(
+  filename: string,
+  mode: 'full' | 'cross_device' = 'cross_device',
+) {
+  return invoke<string>('restore_webdav_backup', { filename, mode })
 }
 
-export async function restoreLocalBackup(filename: string) {
-  return invoke<void>('restore_local_backup', { filename })
+export async function restoreLocalBackup(
+  filename: string,
+  mode: 'full' | 'cross_device' = 'cross_device',
+) {
+  return invoke<string>('restore_local_backup', { filename, mode })
 }
 
 export async function importLocalBackup(source: string) {
@@ -379,7 +385,7 @@ export async function saveWebdavConfig(
 export async function listWebDavBackup() {
   const list: IWebDavFile[] = await invoke<IWebDavFile[]>('list_webdav_backup')
   list.forEach((item) => {
-    item.filename = item.href.split('/').pop() as string
+    item.filename = decodeURIComponent(item.href.split('/').pop() as string)
   })
   return list
 }

@@ -25,3 +25,4 @@ AGENT_HANDOFF.md
 .env
 .env.*
 *.log
+codex-handoff/
