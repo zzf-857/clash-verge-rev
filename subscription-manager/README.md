@@ -20,7 +20,7 @@ The forms accept Clash/Mihomo YAML subscription URLs. Generic Base64 subscriptio
 
 The launcher checks isolation before executing the test core: TUN and automatic routing must be disabled, listeners must be loopback-only on the reserved test ports, the controller must be the private workspace socket, and provider/dashboard paths must stay inside the workspace. Linked workspace files are refused. Occupied ports or an existing socket cause startup to stop without removing another process's resources. A startup timeout or either child failing shuts down only the launcher's own children. Save operations also recheck runtime isolation before core validation.
 
-The native Profiles entry is not yet safe for a no-restart workflow: its existing native save command can fall back to restarting/replacing the active core, and runtime rollback and atomic revision checking need further work. Do not use the native entry on the protected production instance. Use the isolated browser preview only until those native issues are resolved and deployment is explicitly approved.
+The subscription editor's native Save action can fall back to restarting/replacing the active core, and its runtime rollback and atomic revision checking still need further work. For subscription edits that require an uninterrupted production core, use the isolated browser copy. WebDAV restore is a separate, explicitly confirmed overwrite and restart operation described below.
 
 The browser edits both the copied local source and copied runtime; it does not execute global extension scripts or reproduce native configuration generation. Regenerating through the native client still requires a new isolation review. External file changes and port races are not prevented by an OS sandbox. On an edit conflict, reload the browser page before editing again. Live statistics update after manager actions, not continuously.
 
@@ -34,7 +34,7 @@ The standalone manager requires Node.js 22.18+ (verified here with 22.23.2), a M
 
 ## WebDAV backup / sync
 
-On the desktop Profiles page, choose **WebDAV backup / sync** (Chinese: **WebDAV 备份/同步**). The same action is available inside the subscription manager. Configure WebDAV in the backup panel, upload a backup, and open WebDAV history to restore or delete it. Both deletion and restore require confirmation. The standalone browser displays instructions to open the desktop app; it does not call desktop backup APIs.
+On the desktop Profiles page, choose **WebDAV backup / sync** (Chinese: **WebDAV 备份/同步**). The same action is available inside the subscription manager. Configure WebDAV in the backup panel (HTTPS requires a trusted server certificate), upload a backup, and open WebDAV history to restore or delete it. Both deletion and restore require confirmation. The standalone browser displays instructions to open the desktop app; it does not call desktop backup APIs.
 
 Backups contain flat profile files, their index, provider definitions, groups and rules, Merge/Script, Clash/Verge settings and optional DNS overrides. External provider files and nested caches are not included. WebDAV credentials are excluded from newly created archives and target credentials are retained on restore.
 
