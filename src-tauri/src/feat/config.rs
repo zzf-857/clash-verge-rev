@@ -144,7 +144,7 @@ fn determine_update_flags(patch: &IVerge) -> UpdateFlags {
     if restart_core_needed {
         update_flags.insert(UpdateFlags::RESTART_CORE);
     }
-    if tun_mode.is_some() {
+    if tun_mode.is_some() || patch.process_route_groups.is_some() {
         update_flags.insert(UpdateFlags::CLASH_CONFIG | UpdateFlags::GROUP_SYS_TRAY);
     }
     if enable_global_hotkey.is_some() || home_cards.is_some() {

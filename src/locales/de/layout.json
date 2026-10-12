@@ -7,6 +7,7 @@
         "profiles": "Abonnement",
         "connections": "Verbindungen",
         "rules": "Regeln",
+        "processRoutes": "Routing",
         "logs": "Protokolle",
         "unlock": "Testen",
         "settings": "Einstellungen"

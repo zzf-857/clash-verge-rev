@@ -10,7 +10,8 @@ use deelevate::{PrivilegeLevel, Token};
 #[cfg(unix)]
 pub use libc;
 use parking_lot::RwLock;
-use sysinfo::{Networks, System};
+use serde::Serialize;
+use sysinfo::{Networks, ProcessRefreshKind, ProcessesToUpdate, System, UpdateKind};
 use tauri::{
     Manager as _, Runtime,
     plugin::{Builder, TauriPlugin},
@@ -133,6 +134,50 @@ pub fn list_network_interfaces() -> Vec<String> {
     let mut networks = Networks::new();
     networks.refresh(false);
     networks.keys().map(|name| name.to_owned()).collect()
+}
+
+#[derive(Serialize)]
+pub struct ProcessEntry {
+    pub pid: u32,
+    pub ppid: Option<u32>,
+    /// Basename of the executable when known, matching how mihomo resolves `PROCESS-NAME`.
+    pub name: String,
+    /// Name reported by the OS, which differs from `name` for versioned or renamed binaries.
+    pub comm: String,
+    pub exe: Option<String>,
+    pub memory: u64,
+}
+
+pub fn list_processes() -> Vec<ProcessEntry> {
+    let mut system = System::new();
+    system.refresh_processes_specifics(
+        ProcessesToUpdate::All,
+        true,
+        ProcessRefreshKind::nothing()
+            .with_memory()
+            .with_exe(UpdateKind::OnlyIfNotSet),
+    );
+    system
+        .processes()
+        .values()
+        .filter(|process| process.thread_kind().is_none())
+        .map(|process| {
+            let exe = process.exe().filter(|path| !path.as_os_str().is_empty());
+            let comm = process.name().to_string_lossy().into_owned();
+            let name = exe
+                .and_then(|path| path.file_name())
+                .map(|name| name.to_string_lossy().into_owned())
+                .unwrap_or_else(|| comm.clone());
+            ProcessEntry {
+                pid: process.pid().as_u32(),
+                ppid: process.parent().map(|pid| pid.as_u32()),
+                name,
+                comm,
+                exe: exe.map(|path| path.to_string_lossy().into_owned()),
+                memory: process.memory(),
+            }
+        })
+        .collect()
 }
 
 #[inline]

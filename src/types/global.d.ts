@@ -945,6 +945,34 @@ interface IVergeConfig {
   enable_hover_jump_navigator?: boolean
   hover_jump_navigator_delay?: number
   enable_external_controller?: boolean
+  process_route_groups?: IProcessRouteGroup[]
+}
+
+type ProcessMatchKind = 'PROCESS-NAME' | 'PROCESS-PATH' | 'PROCESS-PATH-REGEX'
+
+interface IProcessMatcher {
+  kind: ProcessMatchKind
+  value: string
+  label?: string
+}
+
+interface IProcessRouteGroup {
+  id: string
+  name: string
+  enabled?: boolean
+  color?: string
+  /** Existing profile proxy group to route into; a select group is generated when unset */
+  target?: string | null
+  matchers: IProcessMatcher[]
+}
+
+interface IProcessEntry {
+  pid: number
+  ppid: number | null
+  name: string
+  comm: string
+  exe: string | null
+  memory: number
 }
 
 interface IWebDavFile {

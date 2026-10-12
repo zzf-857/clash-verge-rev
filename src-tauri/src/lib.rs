@@ -121,6 +121,7 @@ mod app_init {
             tauri_plugin_clash_verge_sysinfo::commands::get_system_info,
             tauri_plugin_clash_verge_sysinfo::commands::get_app_uptime,
             tauri_plugin_clash_verge_sysinfo::commands::export_diagnostic_info,
+            tauri_plugin_clash_verge_sysinfo::commands::list_processes,
             cmd::probe_listener,
             cmd::save_proxy_ports,
             cmd::get_sys_proxy,

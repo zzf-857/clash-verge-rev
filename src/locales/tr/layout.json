@@ -7,6 +7,7 @@
         "profiles": "Profiller",
         "connections": "Bağlantılar",
         "rules": "Kurallar",
+        "processRoutes": "Routing",
         "logs": "Günlükler",
         "unlock": "Test",
         "settings": "Ayarlar"

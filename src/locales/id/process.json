@@ -1,0 +1,123 @@
+{
+  "page": {
+    "title": "Process Routing",
+    "actions": {
+      "newGroup": "New Group",
+      "refresh": "Refresh processes"
+    },
+    "status": {
+      "applying": "Applying…",
+      "applied": "Applied"
+    }
+  },
+  "picker": {
+    "title": "Choose a process",
+    "browse": "Browse for an executable",
+    "search": "Search by name or path",
+    "tabs": {
+      "running": "Running",
+      "traffic": "With traffic"
+    },
+    "addingTo": "Adding to {{name}}",
+    "connections": "{{count}} conn.",
+    "noPath": "Path unavailable",
+    "empty": {
+      "running": "No processes found. Try refreshing.",
+      "traffic": "No process has sent traffic through Clash yet.",
+      "search": "No matching process."
+    }
+  },
+  "dialog": {
+    "instances": "{{count}} running instance(s)",
+    "genericWarning": "{{name}} is a shared runtime. Every program it runs will be routed through this group, not only this one.",
+    "match": {
+      "title": "Match by",
+      "path": {
+        "label": "Exact path",
+        "desc": "Only this executable"
+      },
+      "name": {
+        "label": "Process name",
+        "desc": "Any process with this name"
+      },
+      "dir": {
+        "label": "Install folder",
+        "desc": "Everything in this folder, survives updates"
+      }
+    },
+    "related": {
+      "title": "Child & related processes",
+      "selectAll": "Select all",
+      "clear": "Clear",
+      "child": "Child",
+      "sameDir": "Same folder",
+      "covered": "Included",
+      "generic": "Shared runtime: routing it affects every program it runs",
+      "none": "No child or related processes detected.",
+      "notRunning": "Not running, so child processes can't be detected. Add it again while it runs to include them."
+    },
+    "group": {
+      "title": "Add to group",
+      "new": "New group"
+    },
+    "preview": "Rule preview",
+    "cancel": "Cancel",
+    "confirm": "Add to {{name}} · {{count}}"
+  },
+  "form": {
+    "name": "Group name",
+    "create": "Create",
+    "duplicate": "A group with this name already exists",
+    "comma": "Group names can't contain commas",
+    "reuseProfileGroup": "Matches a proxy group in your profile; that group will be used",
+    "exit": "Exit policy",
+    "exitAuto": "New group: pick nodes from this profile",
+    "exitAutoHint": "Creates a selector containing every node in the current profile",
+    "exitExistingHint": "Rules route into this existing profile group"
+  },
+  "group": {
+    "exit": "Exit node",
+    "applying": "Applying configuration…",
+    "controlledBy": "Chosen automatically ({{type}})",
+    "searchNode": "Search nodes",
+    "testDelay": "Test latency",
+    "noNodes": "No nodes",
+    "processes": "Processes",
+    "addProcess": "Add",
+    "emptyProcesses": "Add a process",
+    "connections": "{{count}} active",
+    "idle": "Idle",
+    "paused": "Paused",
+    "pause": "Pause routing",
+    "resume": "Resume routing",
+    "rename": "Rename",
+    "delete": "Delete group",
+    "deleteConfirm": "Click again to delete",
+    "color": "Change color",
+    "linked": "Routes into profile group {{name}}"
+  },
+  "kinds": {
+    "name": "Process name",
+    "path": "Exact path",
+    "dir": "Install folder"
+  },
+  "banner": {
+    "tun": {
+      "title": "TUN mode is off",
+      "desc": "Programs that ignore the system proxy (most command-line tools) bypass Clash, so process rules can't route them.",
+      "action": "Enable TUN"
+    },
+    "mode": {
+      "title": "Clash is in {{mode}} mode",
+      "desc": "Process rules only apply in rule mode.",
+      "action": "Switch to rule"
+    }
+  },
+  "empty": {
+    "title": "No process groups yet",
+    "desc": "Pick a running program on the left, or browse for an executable, then choose which exit node its traffic uses."
+  },
+  "notice": {
+    "added": "Added {{count}} rule(s) to {{name}}"
+  }
+}

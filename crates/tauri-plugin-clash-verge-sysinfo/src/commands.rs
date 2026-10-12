@@ -3,7 +3,7 @@ use serde::Serialize;
 use tauri::{AppHandle, Runtime, State, command};
 use tauri_plugin_clipboard_manager::{ClipboardExt as _, Error};
 
-use crate::Platform;
+use crate::{Platform, ProcessEntry};
 
 #[derive(Serialize)]
 pub struct SystemInfo {
@@ -50,4 +50,11 @@ pub fn export_diagnostic_info<R: Runtime>(
     let info = state.inner().read().to_string();
     let clipboard = app_handle.clipboard();
     clipboard.write_text(info)
+}
+
+#[command]
+pub async fn list_processes() -> Result<Vec<ProcessEntry>, String> {
+    tauri::async_runtime::spawn_blocking(crate::list_processes)
+        .await
+        .map_err(|err| err.to_string())
 }

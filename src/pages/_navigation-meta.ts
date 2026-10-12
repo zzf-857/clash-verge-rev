@@ -13,6 +13,10 @@ export const navigationItems = {
     path: '/connections',
   },
   rules: { label: 'layout.components.navigation.tabs.rules', path: '/rules' },
+  processRoutes: {
+    label: 'layout.components.navigation.tabs.processRoutes',
+    path: '/process-routes',
+  },
   logs: { label: 'layout.components.navigation.tabs.logs', path: '/logs' },
   unlock: {
     label: 'layout.components.navigation.tabs.unlock',
