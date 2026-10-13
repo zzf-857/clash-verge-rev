@@ -8,6 +8,7 @@ name: Fork Build
 on:
   push:
     branches:
+      - dev
       - 'claude/**'
     paths-ignore:
       - '**.md'
