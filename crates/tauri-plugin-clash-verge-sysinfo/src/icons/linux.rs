@@ -116,19 +116,18 @@ fn build_index() -> DesktopIndex {
 
 fn icon_name_for(exe: &str) -> Option<String> {
     static INDEX: OnceLock<Mutex<Option<DesktopIndex>>> = OnceLock::new();
-    let mut guard = INDEX.get_or_init(Default::default).lock();
-    if guard.as_ref().is_none_or(|index| index.built.elapsed() > INDEX_TTL) {
-        *guard = Some(build_index());
-    }
-    let index = guard.as_ref()?;
     let name = Path::new(exe).file_name()?.to_str()?;
-    index
-        .icons
-        .get(exe)
-        .or_else(|| index.icons.get(name))
-        .cloned()
-        // Many themes ship an icon named after the program even without a desktop entry.
-        .or_else(|| Some(name.to_owned()))
+    let found = {
+        let mut guard = INDEX.get_or_init(Default::default).lock();
+        if guard.as_ref().is_none_or(|index| index.built.elapsed() > INDEX_TTL) {
+            *guard = Some(build_index());
+        }
+        guard
+            .as_ref()
+            .and_then(|index| index.icons.get(exe).or_else(|| index.icons.get(name)).cloned())
+    };
+    // Many themes ship an icon named after the program even without a desktop entry.
+    found.or_else(|| Some(name.to_owned()))
 }
 
 fn read_icon(path: &Path) -> Option<IconData> {
