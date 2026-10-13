@@ -109,7 +109,12 @@ export const GroupForm = ({
             ? t('process.form.exitExistingHint')
             : t('process.form.exitAutoHint')
         }
-        slotProps={{ input: { sx: { borderRadius: 2 } } }}
+        slotProps={{
+          input: { sx: { borderRadius: 2 } },
+          // The empty value is the "create a group" option, not a missing value.
+          inputLabel: { shrink: true },
+          select: { displayEmpty: true },
+        }}
       >
         <MenuItem value="">{t('process.form.exitAuto')}</MenuItem>
         {profileGroups.map((name) => (

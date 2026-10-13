@@ -25,6 +25,10 @@
       "running": "No processes found. Try refreshing.",
       "traffic": "No process has sent traffic through Clash yet.",
       "search": "No matching process."
+    },
+    "detect": {
+      "desc": "By default only connections that hit a process rule record the program name. Turn on process detection to list every program sending traffic.",
+      "action": "Detect processes"
     }
   },
   "dialog": {

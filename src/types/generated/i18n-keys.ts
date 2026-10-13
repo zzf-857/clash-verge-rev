@@ -171,6 +171,8 @@ export const translationKeys = [
   'process.picker.empty.running',
   'process.picker.empty.traffic',
   'process.picker.empty.search',
+  'process.picker.detect.desc',
+  'process.picker.detect.action',
   'process.dialog.instances',
   'process.dialog.genericWarning',
   'process.dialog.match.title',

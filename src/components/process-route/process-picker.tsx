@@ -28,6 +28,11 @@ import { memo, useDeferredValue, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { useConnectionData } from '@/hooks/use-connection-data'
+import {
+  useAppRefreshers,
+  useClashConfigData,
+} from '@/providers/app-data-context'
+import { patchClashConfig } from '@/services/cmds'
 import { showNotice } from '@/services/notice-service'
 import getSystem from '@/utils/get-system'
 import parseTraffic from '@/utils/parse-traffic'
@@ -82,6 +87,19 @@ export const ProcessPicker = ({
   const {
     response: { data: connData },
   } = useConnectionData()
+  const { clashConfig } = useClashConfigData()
+  const { refreshClashConfig } = useAppRefreshers()
+  // In mihomo's default "strict" mode only connections hitting a process rule carry
+  // the process name, so the traffic tab cannot list unrouted programs.
+  const detectsAllProcesses = clashConfig?.findProcessMode === 'Always'
+  const enableDetection = async () => {
+    try {
+      await patchClashConfig({ 'find-process-mode': 'always' })
+      await refreshClashConfig()
+    } catch (error) {
+      showNotice.error(error)
+    }
+  }
 
   const runningApps = useMemo(
     () => groupProcesses(processes ?? []),
@@ -331,6 +349,38 @@ export const ProcessPicker = ({
       </Box>
 
       <Box sx={{ flex: 1, minHeight: 0, overflowY: 'auto', px: 1, pb: 1 }}>
+        {tab === 'traffic' && clashConfig && !detectsAllProcesses && (
+          <Box
+            sx={{
+              mx: 0.5,
+              mb: 1,
+              px: 1.5,
+              py: 1.25,
+              borderRadius: 2,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1.5,
+              bgcolor: (theme) => alpha(theme.palette.info.main, 0.08),
+              border: (theme) =>
+                `1px solid ${alpha(theme.palette.info.main, 0.2)}`,
+            }}
+          >
+            <Typography
+              sx={{ fontSize: 12.5, flex: 1, color: 'text.secondary' }}
+            >
+              {t('process.picker.detect.desc')}
+            </Typography>
+            <Button
+              size="small"
+              variant="contained"
+              disableElevation
+              onClick={enableDetection}
+              sx={{ borderRadius: 2, flexShrink: 0, textTransform: 'none' }}
+            >
+              {t('process.picker.detect.action')}
+            </Button>
+          </Box>
+        )}
         {loading && !processes
           ? Array.from({ length: 8 }, (_, index) => (
               <Box key={index} sx={{ display: 'flex', gap: 1.25, p: 1.25 }}>

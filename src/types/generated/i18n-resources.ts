@@ -371,6 +371,10 @@ export interface TranslationResources {
         addingTo: string
         browse: string
         connections: string
+        detect: {
+          action: string
+          desc: string
+        }
         empty: {
           running: string
           search: string

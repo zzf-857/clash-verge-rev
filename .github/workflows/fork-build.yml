@@ -2,7 +2,9 @@ name: Fork Build
 
 # Unsigned installers for every desktop platform. Upstream release workflows
 # need the updater signing key and Apple certificates, which forks lack, so
-# updater artifacts are disabled here.
+# updater artifacts are disabled here. The updater is pointed at this
+# repository: with upstream's endpoints the silent updater would replace the
+# fork build with the official release on the next launch.
 on:
   push:
     branches:
@@ -20,9 +22,10 @@ env:
   RUST_BACKTRACE: short
   HUSKY: 0
 
+# A running build finishes; only the newest pending push builds after it.
 concurrency:
   group: '${{ github.workflow }} - ${{ github.ref }}'
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   build:
@@ -93,7 +96,16 @@ jobs:
         env:
           NODE_OPTIONS: '--max_old_space_size=4096'
         run: |
-          echo '{"bundle":{"createUpdaterArtifacts":false}}' > "$RUNNER_TEMP/fork.conf.json"
+          cat > "$RUNNER_TEMP/fork.conf.json" <<EOF
+          {
+            "bundle": { "createUpdaterArtifacts": false },
+            "plugins": {
+              "updater": {
+                "endpoints": ["https://github.com/${GITHUB_REPOSITORY}/releases/download/updater/update.json"]
+              }
+            }
+          }
+          EOF
           pnpm tauri build --target ${{ matrix.target }} -b ${{ matrix.bundle }} --config "$RUNNER_TEMP/fork.conf.json"
 
       - name: Upload installers

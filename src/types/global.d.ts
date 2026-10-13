@@ -36,6 +36,7 @@ interface IConfigData {
   }
   secret: string
   'unified-delay': boolean
+  'find-process-mode'?: 'off' | 'strict' | 'always'
   tun: {
     stack: string
     device: string
