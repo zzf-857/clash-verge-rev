@@ -169,5 +169,10 @@ jobs:
           name: Clash Verge Rev · ${{ inputs.release_tag || github.ref_name }}
           body_path: ${{ runner.temp }}/notes.md
           prerelease: true
-          files: installers/*
+          # Artifacts keep their bundle/<format>/ folders.
+          files: |
+            installers/**/*-setup.exe
+            installers/**/*.dmg
+            installers/**/*.deb
+            installers/**/*.rpm
           fail_on_unmatched_files: true
