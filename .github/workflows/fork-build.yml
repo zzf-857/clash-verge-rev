@@ -5,15 +5,29 @@ name: Fork Build
 # updater artifacts are disabled here. The updater is pointed at this
 # repository: with upstream's endpoints the silent updater would replace the
 # fork build with the official release on the next launch.
+# Pushing a `fork-v*` tag, or running it manually with `release_tag`, also
+# publishes the installers as a prerelease; the prefix keeps clear of
+# upstream's `v*.*.*` release workflow.
 on:
   push:
     branches:
       - dev
       - 'claude/**'
+    tags:
+      - 'fork-v*'
     paths-ignore:
       - '**.md'
       - 'docs/**'
   workflow_dispatch:
+    inputs:
+      release_tag:
+        description: 'Publish a prerelease with this tag (fork-v...); leave empty to only build'
+        required: false
+        default: ''
+      release_notes:
+        description: 'Release notes (Markdown)'
+        required: false
+        default: ''
 
 permissions:
   contents: read
@@ -119,3 +133,41 @@ jobs:
             target/${{ matrix.target }}/release/bundle/deb/*.deb
             target/${{ matrix.target }}/release/bundle/rpm/*.rpm
           if-no-files-found: error
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/fork-v') || startsWith(inputs.release_tag, 'fork-v')
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v7
+
+      - name: Write release notes
+        env:
+          NOTES: ${{ inputs.release_notes }}
+        run: |
+          if [ "$GITHUB_REF_TYPE" = "tag" ]; then
+            git fetch --force origin "+refs/tags/${GITHUB_REF_NAME}:refs/tags/${GITHUB_REF_NAME}"
+            git for-each-ref "refs/tags/${GITHUB_REF_NAME}" --format='%(contents)' > "$RUNNER_TEMP/notes.md"
+          else
+            printf '%s\n' "$NOTES" > "$RUNNER_TEMP/notes.md"
+          fi
+
+      - name: Download installers
+        uses: actions/download-artifact@v8
+        with:
+          path: installers
+          merge-multiple: true
+
+      - name: Publish release
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: ${{ inputs.release_tag || github.ref_name }}
+          target_commitish: ${{ github.sha }}
+          name: Clash Verge Rev · ${{ inputs.release_tag || github.ref_name }}
+          body_path: ${{ runner.temp }}/notes.md
+          prerelease: true
+          files: installers/*
+          fail_on_unmatched_files: true
