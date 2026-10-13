@@ -1,3 +1,4 @@
+import AltRouteOutlinedIcon from '@mui/icons-material/AltRouteOutlined'
 import DnsOutlinedIcon from '@mui/icons-material/DnsOutlined'
 import ForkRightOutlinedIcon from '@mui/icons-material/ForkRightOutlined'
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined'
@@ -11,6 +12,7 @@ import { type ComponentType, type ReactNode } from 'react'
 import ConnectionsSvg from '@/assets/image/itemicon/connections.svg?react'
 import HomeSvg from '@/assets/image/itemicon/home.svg?react'
 import LogsSvg from '@/assets/image/itemicon/logs.svg?react'
+import ProcessRoutesSvg from '@/assets/image/itemicon/process-routes.svg?react'
 import ProfilesSvg from '@/assets/image/itemicon/profiles.svg?react'
 import ProxiesSvg from '@/assets/image/itemicon/proxies.svg?react'
 import RulesSvg from '@/assets/image/itemicon/rules.svg?react'
@@ -21,6 +23,7 @@ import { navigationItems } from './_navigation-meta'
 import ConnectionsPage from './connections'
 import HomePage from './home'
 import LogsPage from './logs'
+import ProcessRoutesPage from './process-routes'
 import ProfilePage from './profiles'
 import ProxyPage from './proxies'
 import RulesPage from './rules'
@@ -59,6 +62,11 @@ export const navItems: NavigationItem[] = [
     ...navigationItems.rules,
     icon: [<ForkRightOutlinedIcon key="mui" />, <RulesSvg key="svg" />],
     Component: RulesPage,
+  },
+  {
+    ...navigationItems.processRoutes,
+    icon: [<AltRouteOutlinedIcon key="mui" />, <ProcessRoutesSvg key="svg" />],
+    Component: ProcessRoutesPage,
   },
   {
     ...navigationItems.logs,

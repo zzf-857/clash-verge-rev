@@ -7,6 +7,7 @@
         "profiles": "Profil",
         "connections": "Koneksi",
         "rules": "Aturan",
+        "processRoutes": "Routing",
         "logs": "Log",
         "unlock": "Test",
         "settings": "Pengaturan"

@@ -7,6 +7,7 @@
         "profiles": "Профильләр",
         "connections": "Тоташулар",
         "rules": "Кагыйдәләр",
+        "processRoutes": "Routing",
         "logs": "Логлар",
         "unlock": "Test",
         "settings": "Көйләүләр"

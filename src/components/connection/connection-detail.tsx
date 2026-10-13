@@ -3,8 +3,10 @@ import { useLockFn } from 'ahooks'
 import dayjs from 'dayjs'
 import { useCallback, useImperativeHandle, useState, type Ref } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useNavigate } from 'react-router'
 import { closeConnection } from 'tauri-plugin-mihomo-api'
 
+import type { ProcessPickState } from '@/components/process-route/process-utils'
 import parseTraffic from '@/utils/parse-traffic'
 
 export interface ConnectionDetailRef {
@@ -130,6 +132,15 @@ const InnerConnectionDetail = ({ data, closed, onClose }: InnerProps) => {
   ]
 
   const onDelete = useLockFn(async () => closeConnection(data.id))
+  const navigate = useNavigate()
+  const processName = metadata.process || metadata.processPath
+  const routeProcess = () => {
+    const state: ProcessPickState = {
+      pick: { name: processName ?? '', exe: metadata.processPath || null },
+    }
+    onClose?.()
+    navigate('/process-routes', { state })
+  }
 
   return (
     <Box sx={{ userSelect: 'text', color: theme.palette.text.secondary }}>
@@ -147,18 +158,27 @@ const InnerConnectionDetail = ({ data, closed, onClose }: InnerProps) => {
         </div>
       ))}
 
-      {!closed && (
-        <Box sx={{ textAlign: 'right' }}>
-          <Button
-            variant="contained"
-            title={t('connections.components.actions.closeConnection')}
-            onClick={() => {
-              onDelete()
-              onClose?.()
-            }}
-          >
-            {t('connections.components.actions.closeConnection')}
-          </Button>
+      {(!closed || processName) && (
+        <Box
+          sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1, mt: 1 }}
+        >
+          {processName && (
+            <Button variant="outlined" onClick={routeProcess}>
+              {t('connections.components.actions.routeProcess')}
+            </Button>
+          )}
+          {!closed && (
+            <Button
+              variant="contained"
+              title={t('connections.components.actions.closeConnection')}
+              onClick={() => {
+                onDelete()
+                onClose?.()
+              }}
+            >
+              {t('connections.components.actions.closeConnection')}
+            </Button>
+          )}
         </Box>
       )}
     </Box>

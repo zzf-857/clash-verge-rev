@@ -208,6 +208,39 @@ pub struct IVerge {
     pub hover_jump_navigator_delay: Option<u64>,
 
     pub enable_external_controller: Option<bool>,
+
+    /// Process routing groups injected into the runtime config as rules and select groups
+    pub process_route_groups: Option<Vec<IProcessRouteGroup>>,
+}
+
+#[derive(Default, Debug, Clone, Deserialize, Serialize)]
+pub struct IProcessRouteGroup {
+    pub id: String,
+    pub name: String,
+    pub enabled: Option<bool>,
+    pub color: Option<String>,
+    /// Route to this existing profile group instead of generating a group named `name`
+    pub target: Option<String>,
+    #[serde(default)]
+    pub matchers: Vec<IProcessMatcher>,
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct IProcessMatcher {
+    pub kind: ProcessMatchKind,
+    pub value: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub label: Option<String>,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize, Serialize)]
+pub enum ProcessMatchKind {
+    #[serde(rename = "PROCESS-NAME")]
+    Name,
+    #[serde(rename = "PROCESS-PATH")]
+    Path,
+    #[serde(rename = "PROCESS-PATH-REGEX")]
+    PathRegex,
 }
 
 #[derive(Default, Debug, Clone, Deserialize, Serialize)]
@@ -494,6 +527,7 @@ impl IVerge {
         patch!(enable_dns_settings);
         patch!(home_cards);
         patch!(enable_external_controller);
+        patch!(process_route_groups);
     }
 
     pub fn get_log_level(&self) -> LevelFilter {

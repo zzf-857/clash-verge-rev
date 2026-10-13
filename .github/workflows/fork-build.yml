@@ -1,0 +1,120 @@
+name: Fork Build
+
+# Unsigned installers for every desktop platform. Upstream release workflows
+# need the updater signing key and Apple certificates, which forks lack, so
+# updater artifacts are disabled here. The updater is pointed at this
+# repository: with upstream's endpoints the silent updater would replace the
+# fork build with the official release on the next launch.
+on:
+  push:
+    branches:
+      - 'claude/**'
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  CARGO_INCREMENTAL: 0
+  RUST_BACKTRACE: short
+  HUSKY: 0
+
+# A running build finishes; only the newest pending push builds after it.
+concurrency:
+  group: '${{ github.workflow }} - ${{ github.ref }}'
+  cancel-in-progress: false
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+            bundle: nsis
+            id: windows-x64
+          - os: macos-latest
+            target: aarch64-apple-darwin
+            bundle: dmg
+            id: macos-aarch64
+          - os: macos-latest
+            target: x86_64-apple-darwin
+            bundle: dmg
+            id: macos-x64
+          - os: ubuntu-22.04
+            target: x86_64-unknown-linux-gnu
+            bundle: deb,rpm
+            id: linux-amd64
+
+    name: ${{ matrix.id }}
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v7
+
+      - name: Install Rust Stable
+        uses: dtolnay/rust-toolchain@1.98.1
+        with:
+          targets: ${{ matrix.target }}
+
+      - name: Rust Cache
+        uses: Swatinem/rust-cache@v2
+        with:
+          prefix-key: 'v1-rust'
+          key: 'fork-build-${{ matrix.os }}-${{ matrix.target }}'
+          workspaces: |
+            . -> target
+
+      - name: Install dependencies (ubuntu only)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libxslt1.1 libwebkit2gtk-4.1-dev libayatana-appindicator3-dev librsvg2-dev patchelf
+
+      - uses: pnpm/action-setup@v6
+        name: Install pnpm
+        with:
+          run_install: false
+
+      - name: Install Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: '24.21.0'
+          cache: 'pnpm'
+
+      - name: Pnpm install and prebuild
+        run: |
+          pnpm i
+          pnpm run prebuild ${{ matrix.target }}
+
+      - name: Tauri build
+        shell: bash
+        env:
+          NODE_OPTIONS: '--max_old_space_size=4096'
+        run: |
+          cat > "$RUNNER_TEMP/fork.conf.json" <<EOF
+          {
+            "bundle": { "createUpdaterArtifacts": false },
+            "plugins": {
+              "updater": {
+                "endpoints": ["https://github.com/${GITHUB_REPOSITORY}/releases/download/updater/update.json"]
+              }
+            }
+          }
+          EOF
+          pnpm tauri build --target ${{ matrix.target }} -b ${{ matrix.bundle }} --config "$RUNNER_TEMP/fork.conf.json"
+
+      - name: Upload installers
+        uses: actions/upload-artifact@v7
+        with:
+          name: clash-verge-${{ matrix.id }}
+          path: |
+            target/${{ matrix.target }}/release/bundle/nsis/*-setup.exe
+            target/${{ matrix.target }}/release/bundle/dmg/*.dmg
+            target/${{ matrix.target }}/release/bundle/deb/*.deb
+            target/${{ matrix.target }}/release/bundle/rpm/*.rpm
+          if-no-files-found: error

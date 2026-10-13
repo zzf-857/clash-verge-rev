@@ -7,6 +7,7 @@
         "profiles": "프로필",
         "connections": "연결",
         "rules": "규칙",
+        "processRoutes": "Routing",
         "logs": "로그",
         "unlock": "테스트",
         "settings": "설정"

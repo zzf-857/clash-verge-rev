@@ -1,0 +1,127 @@
+{
+  "page": {
+    "title": "进程分流",
+    "actions": {
+      "newGroup": "新建分组",
+      "refresh": "刷新进程"
+    },
+    "status": {
+      "applying": "正在应用…",
+      "applied": "已生效"
+    }
+  },
+  "picker": {
+    "title": "选择进程",
+    "browse": "浏览可执行文件",
+    "search": "搜索进程名或路径",
+    "tabs": {
+      "running": "运行中",
+      "traffic": "有流量"
+    },
+    "addingTo": "正在添加到「{{name}}」",
+    "connections": "{{count}} 个连接",
+    "noPath": "无法获取路径",
+    "empty": {
+      "running": "没有找到进程，试试刷新。",
+      "traffic": "还没有进程通过 Clash 产生流量。",
+      "search": "没有匹配的进程。"
+    },
+    "detect": {
+      "desc": "默认只有命中进程规则的连接才会记录程序名。开启进程识别后，这里会列出所有产生流量的程序。",
+      "action": "开启进程识别"
+    }
+  },
+  "dialog": {
+    "instances": "{{count}} 个运行实例",
+    "genericWarning": "{{name}} 是通用运行时，由它运行的所有程序都会走这个分组，而不只是当前这个。",
+    "match": {
+      "title": "匹配方式",
+      "path": {
+        "label": "精确路径",
+        "desc": "仅匹配此可执行文件"
+      },
+      "name": {
+        "label": "进程名",
+        "desc": "匹配所有同名进程"
+      },
+      "dir": {
+        "label": "安装目录",
+        "desc": "目录内所有程序，升级后依然有效"
+      }
+    },
+    "related": {
+      "title": "子进程与关联进程",
+      "selectAll": "全选",
+      "clear": "清空",
+      "child": "子进程",
+      "sameDir": "同目录",
+      "covered": "已包含",
+      "generic": "通用运行时：分流它会影响由它运行的所有程序",
+      "none": "未发现子进程或关联程序。",
+      "notRunning": "程序未运行，无法识别子进程。运行后再次添加即可一并加入。"
+    },
+    "group": {
+      "title": "加入分组",
+      "new": "新建分组"
+    },
+    "preview": "规则预览",
+    "cancel": "取消",
+    "confirm": "加入「{{name}}」· {{count}} 条"
+  },
+  "form": {
+    "name": "分组名称",
+    "create": "创建",
+    "duplicate": "已存在同名分组",
+    "comma": "分组名称不能包含逗号",
+    "reuseProfileGroup": "与订阅中的策略组同名，将直接使用该策略组",
+    "exit": "出口策略",
+    "exitAuto": "新建分组：从当前订阅选择节点",
+    "exitAutoHint": "自动创建一个包含当前订阅所有节点的选择组",
+    "exitExistingHint": "规则将指向订阅中已有的这个策略组"
+  },
+  "group": {
+    "exit": "出口节点",
+    "applying": "正在应用配置…",
+    "controlledBy": "自动选择（{{type}}）",
+    "searchNode": "搜索节点",
+    "testDelay": "测试延迟",
+    "noNodes": "没有节点",
+    "processes": "进程",
+    "addProcess": "添加",
+    "emptyProcesses": "添加进程",
+    "connections": "{{count}} 个连接",
+    "idle": "空闲",
+    "paused": "已暂停",
+    "pause": "暂停分流",
+    "resume": "恢复分流",
+    "rename": "重命名",
+    "delete": "删除分组",
+    "deleteConfirm": "再次点击确认删除",
+    "color": "更换颜色",
+    "linked": "指向订阅策略组「{{name}}」"
+  },
+  "kinds": {
+    "name": "进程名",
+    "path": "精确路径",
+    "dir": "安装目录"
+  },
+  "banner": {
+    "tun": {
+      "title": "TUN 模式未开启",
+      "desc": "不读取系统代理的程序（多数命令行工具）流量不会经过 Clash，进程规则对它们无效。",
+      "action": "开启 TUN"
+    },
+    "mode": {
+      "title": "当前为 {{mode}} 模式",
+      "desc": "进程规则只在规则模式下生效。",
+      "action": "切换到规则模式"
+    }
+  },
+  "empty": {
+    "title": "还没有进程分组",
+    "desc": "从左侧选择一个正在运行的程序，或浏览可执行文件，然后指定它的流量从哪个节点出去。"
+  },
+  "notice": {
+    "added": "已将 {{count}} 条规则加入「{{name}}」"
+  }
+}

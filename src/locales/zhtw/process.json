@@ -1,0 +1,127 @@
+{
+  "page": {
+    "title": "進程分流",
+    "actions": {
+      "newGroup": "新建分組",
+      "refresh": "刷新進程"
+    },
+    "status": {
+      "applying": "正在應用…",
+      "applied": "已生效"
+    }
+  },
+  "picker": {
+    "title": "選擇進程",
+    "browse": "瀏覽可執行文件",
+    "search": "搜索進程名或路徑",
+    "tabs": {
+      "running": "運行中",
+      "traffic": "有流量"
+    },
+    "addingTo": "正在添加到「{{name}}」",
+    "connections": "{{count}} 個连接",
+    "noPath": "無法獲取路徑",
+    "empty": {
+      "running": "沒有找到進程，試試刷新。",
+      "traffic": "還沒有進程通過 Clash 產生流量。",
+      "search": "沒有匹配的進程。"
+    },
+    "detect": {
+      "desc": "預設只有命中進程規則的連線才會記錄程式名稱。開啟進程識別後，這裡會列出所有產生流量的程式。",
+      "action": "開啟進程識別"
+    }
+  },
+  "dialog": {
+    "instances": "{{count}} 個運行實例",
+    "genericWarning": "{{name}} 是通用運行時，由它運行的所有程序都会走這個分組，而不只是當前這個。",
+    "match": {
+      "title": "匹配方式",
+      "path": {
+        "label": "精確路徑",
+        "desc": "僅匹配此可執行文件"
+      },
+      "name": {
+        "label": "進程名",
+        "desc": "匹配所有同名進程"
+      },
+      "dir": {
+        "label": "安裝目錄",
+        "desc": "目錄內所有程序，升級後依然有效"
+      }
+    },
+    "related": {
+      "title": "子進程与關聯進程",
+      "selectAll": "全選",
+      "clear": "清空",
+      "child": "子進程",
+      "sameDir": "同目錄",
+      "covered": "已包含",
+      "generic": "通用運行時：分流它会影響由它運行的所有程序",
+      "none": "未發現子進程或關聯程序。",
+      "notRunning": "程序未運行，無法識別子進程。運行後再次添加即可一併加入。"
+    },
+    "group": {
+      "title": "加入分組",
+      "new": "新建分組"
+    },
+    "preview": "規則預覽",
+    "cancel": "取消",
+    "confirm": "加入「{{name}}」· {{count}} 條"
+  },
+  "form": {
+    "name": "分組名稱",
+    "create": "創建",
+    "duplicate": "已存在同名分組",
+    "comma": "分組名稱不能包含逗號",
+    "reuseProfileGroup": "与訂閱中的策略組同名，將直接使用該策略組",
+    "exit": "出口策略",
+    "exitAuto": "新建分組：從當前訂閱選擇節點",
+    "exitAutoHint": "自動創建一個包含當前訂閱所有節點的選擇組",
+    "exitExistingHint": "規則將指向訂閱中已有的這個策略組"
+  },
+  "group": {
+    "exit": "出口節點",
+    "applying": "正在應用配置…",
+    "controlledBy": "自動選擇（{{type}}）",
+    "searchNode": "搜索節點",
+    "testDelay": "測試延遲",
+    "noNodes": "沒有節點",
+    "processes": "進程",
+    "addProcess": "添加",
+    "emptyProcesses": "添加進程",
+    "connections": "{{count}} 個连接",
+    "idle": "空閒",
+    "paused": "已暫停",
+    "pause": "暫停分流",
+    "resume": "恢復分流",
+    "rename": "重命名",
+    "delete": "刪除分組",
+    "deleteConfirm": "再次點擊確認刪除",
+    "color": "更換顏色",
+    "linked": "指向訂閱策略組「{{name}}」"
+  },
+  "kinds": {
+    "name": "進程名",
+    "path": "精確路徑",
+    "dir": "安裝目錄"
+  },
+  "banner": {
+    "tun": {
+      "title": "TUN 模式未開啟",
+      "desc": "不讀取系統代理的程序（多數命令行工具）流量不会經過 Clash，進程規則對它們無效。",
+      "action": "開啟 TUN"
+    },
+    "mode": {
+      "title": "當前為 {{mode}} 模式",
+      "desc": "進程規則只在規則模式下生效。",
+      "action": "切換到規則模式"
+    }
+  },
+  "empty": {
+    "title": "還沒有進程分組",
+    "desc": "從左侧選擇一個正在運行的程序，或瀏覽可執行文件，然後指定它的流量從哪個節點出去。"
+  },
+  "notice": {
+    "added": "已將 {{count}} 條規則加入「{{name}}」"
+  }
+}

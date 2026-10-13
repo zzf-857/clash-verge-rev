@@ -1,6 +1,7 @@
 mod chain;
 pub mod field;
 mod merge;
+mod process_route;
 mod script;
 pub mod seq;
 mod tun;
@@ -9,6 +10,7 @@ use self::{
     chain::{AsyncChainItemFrom as _, ChainItem, ChainType},
     field::{use_keys, use_lowercase_owned, use_sort},
     merge::use_merge,
+    process_route::use_process_routes,
     script::use_script,
     seq::{SeqMap, use_seq},
     tun::use_tun,
@@ -16,7 +18,7 @@ use self::{
 use crate::config::dns::{DnsOverrideState, dns_override_source};
 use crate::utils::dirs;
 use crate::{
-    config::{Config, IProfiles, IVerge, PrfItem},
+    config::{Config, IProcessRouteGroup, IProfiles, IVerge, PrfItem},
     constants,
     utils::tmpl,
 };
@@ -39,6 +41,7 @@ struct ConfigValues {
     enable_dns_settings: bool,
     dns_override_confirmation: Option<String>,
     enable_external_controller: bool,
+    process_route_groups: Vec<IProcessRouteGroup>,
     #[cfg(not(target_os = "windows"))]
     redir_enabled: bool,
     #[cfg(target_os = "linux")]
@@ -124,6 +127,7 @@ async fn get_config_values() -> ConfigValues {
     } = **verge_arc;
     let enable_external_controller = enable_external_controller.unwrap_or(false);
     let dns_override_confirmation = verge_arc.dns_override_confirmation.clone();
+    let process_route_groups = verge_arc.process_route_groups.clone().unwrap_or_default();
 
     let (clash_core, enable_tun, enable_builtin, socks_enabled, http_enabled, enable_dns_settings) = (
         Some(verge_arc.get_valid_clash_core()),
@@ -153,6 +157,7 @@ async fn get_config_values() -> ConfigValues {
         enable_dns_settings,
         dns_override_confirmation,
         enable_external_controller,
+        process_route_groups,
         #[cfg(not(target_os = "windows"))]
         redir_enabled,
         #[cfg(target_os = "linux")]
@@ -757,6 +762,7 @@ pub async fn enhance(
         enable_dns_settings,
         dns_override_confirmation,
         enable_external_controller,
+        process_route_groups,
         #[cfg(not(target_os = "windows"))]
         redir_enabled,
         #[cfg(target_os = "linux")]
@@ -819,6 +825,7 @@ pub async fn enhance(
 
     let config = authoritative.enforce(config);
     let config = ensure_lan_bind_address(config);
+    let config = use_process_routes(config, &process_route_groups);
 
     let config = cleanup_proxy_groups(config);
     let config = use_sort(config);

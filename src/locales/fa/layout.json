@@ -7,6 +7,7 @@
         "profiles": "پروفایل‌ها",
         "connections": "اتصالات",
         "rules": "قوانین",
+        "processRoutes": "Routing",
         "logs": "لاگ‌ها",
         "unlock": "Test",
         "settings": "تنظیمات"

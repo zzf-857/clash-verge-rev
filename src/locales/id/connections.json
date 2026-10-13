@@ -24,7 +24,8 @@
     "actions": {
       "active": "Active",
       "closed": "Closed",
-      "closeConnection": "Tutup Koneksi"
+      "closeConnection": "Tutup Koneksi",
+      "routeProcess": "Route this process"
     },
     "columnManager": {
       "title": "Kolom",

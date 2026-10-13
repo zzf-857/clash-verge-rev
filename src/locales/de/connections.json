@@ -24,7 +24,8 @@
     "actions": {
       "active": "Active",
       "closed": "Closed",
-      "closeConnection": "Verbindung schließen"
+      "closeConnection": "Verbindung schließen",
+      "routeProcess": "Route this process"
     },
     "columnManager": {
       "title": "Spalten",

@@ -9,6 +9,7 @@ export interface TranslationResources {
           active: string
           closeConnection: string
           closed: string
+          routeProcess: string
         }
         columnManager: {
           dragHandle: string
@@ -207,6 +208,7 @@ export interface TranslationResources {
             connections: string
             home: string
             logs: string
+            processRoutes: string
             profiles: string
             proxies: string
             rules: string
@@ -257,6 +259,133 @@ export interface TranslationResources {
         showDescending: string
       }
       page: {
+        title: string
+      }
+    }
+    process: {
+      banner: {
+        mode: {
+          action: string
+          desc: string
+          title: string
+        }
+        tun: {
+          action: string
+          desc: string
+          title: string
+        }
+      }
+      dialog: {
+        cancel: string
+        confirm: string
+        genericWarning: string
+        group: {
+          new: string
+          title: string
+        }
+        instances: string
+        match: {
+          dir: {
+            desc: string
+            label: string
+          }
+          name: {
+            desc: string
+            label: string
+          }
+          path: {
+            desc: string
+            label: string
+          }
+          title: string
+        }
+        preview: string
+        related: {
+          child: string
+          clear: string
+          covered: string
+          generic: string
+          none: string
+          notRunning: string
+          sameDir: string
+          selectAll: string
+          title: string
+        }
+      }
+      empty: {
+        desc: string
+        title: string
+      }
+      form: {
+        comma: string
+        create: string
+        duplicate: string
+        exit: string
+        exitAuto: string
+        exitAutoHint: string
+        exitExistingHint: string
+        name: string
+        reuseProfileGroup: string
+      }
+      group: {
+        addProcess: string
+        applying: string
+        color: string
+        connections: string
+        controlledBy: string
+        delete: string
+        deleteConfirm: string
+        emptyProcesses: string
+        exit: string
+        idle: string
+        linked: string
+        noNodes: string
+        pause: string
+        paused: string
+        processes: string
+        rename: string
+        resume: string
+        searchNode: string
+        testDelay: string
+      }
+      kinds: {
+        dir: string
+        name: string
+        path: string
+      }
+      notice: {
+        added: string
+      }
+      page: {
+        actions: {
+          newGroup: string
+          refresh: string
+        }
+        status: {
+          applied: string
+          applying: string
+        }
+        title: string
+      }
+      picker: {
+        addingTo: string
+        browse: string
+        connections: string
+        detect: {
+          action: string
+          desc: string
+        }
+        empty: {
+          running: string
+          search: string
+          traffic: string
+        }
+        noPath: string
+        search: string
+        tabs: {
+          running: string
+          traffic: string
+        }
         title: string
       }
     }
