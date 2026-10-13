@@ -9,6 +9,7 @@ export interface TranslationResources {
           active: string
           closeConnection: string
           closed: string
+          routeProcess: string
         }
         columnManager: {
           dragHandle: string

@@ -29,6 +29,7 @@ import { useTranslation } from 'react-i18next'
 
 import { useConnectionData } from '@/hooks/use-connection-data'
 import { showNotice } from '@/services/notice-service'
+import getSystem from '@/utils/get-system'
 import parseTraffic from '@/utils/parse-traffic'
 
 import { ProcessAvatar } from './process-avatar'
@@ -39,6 +40,7 @@ import {
   basename,
   displayName,
   groupProcesses,
+  isAppBundle,
   matcherMatches,
   shortenPath,
 } from './process-utils'
@@ -148,20 +150,39 @@ export const ProcessPicker = ({
 
   const browse = async () => {
     try {
-      const selected = await openDialog({ multiple: false, directory: false })
+      const selected = await openDialog({
+        multiple: false,
+        directory: false,
+        // Shortcuts (.lnk) never match a running process path.
+        filters:
+          getSystem() === 'windows'
+            ? [{ name: 'Programs', extensions: ['exe'] }]
+            : undefined,
+      })
       if (typeof selected !== 'string') return
-      const name = basename(selected)
       const running = runningApps.get(selected)
-      onPick(
-        running ?? {
-          key: selected,
-          name,
-          label: name.replace(/\.app$/i, ''),
-          exe: selected,
-          pids: [],
-          memory: 0,
-        },
-      )
+      if (running) {
+        onPick(running)
+        return
+      }
+      const bundle = isAppBundle(selected)
+      const name = bundle
+        ? basename(selected).replace(/\.app$/i, '')
+        : basename(selected)
+      // Child detection starts from whatever runs inside the picked bundle.
+      const pids = bundle
+        ? [...runningApps.values()]
+            .filter((app) => app.exe?.startsWith(`${selected}/`))
+            .flatMap((app) => app.pids)
+        : []
+      onPick({
+        key: selected,
+        name,
+        label: name,
+        exe: selected,
+        pids,
+        memory: 0,
+      })
     } catch (error) {
       showNotice.error(error)
     }
@@ -408,7 +429,7 @@ const ProcessRow = memo(function ProcessRow({
         },
       }}
     >
-      <ProcessAvatar name={app.label} />
+      <ProcessAvatar name={app.label} exe={app.exe} />
       <Box sx={{ minWidth: 0, flex: 1 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
           <Typography noWrap sx={{ fontSize: 13.5, fontWeight: 600 }}>

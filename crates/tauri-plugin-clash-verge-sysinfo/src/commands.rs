@@ -1,5 +1,6 @@
 use parking_lot::RwLock;
 use serde::Serialize;
+use std::collections::HashMap;
 use tauri::{AppHandle, Runtime, State, command};
 use tauri_plugin_clipboard_manager::{ClipboardExt as _, Error};
 
@@ -57,4 +58,17 @@ pub async fn list_processes() -> Result<Vec<ProcessEntry>, String> {
     tauri::async_runtime::spawn_blocking(crate::list_processes)
         .await
         .map_err(|err| err.to_string())
+}
+
+/// Icons for the given executables as `data:` URLs; executables without an icon are omitted.
+#[command]
+pub async fn get_process_icons(paths: Vec<String>) -> Result<HashMap<String, String>, String> {
+    tauri::async_runtime::spawn_blocking(move || {
+        paths
+            .into_iter()
+            .filter_map(|path| crate::executable_icon(&path).map(|icon| (path, icon)))
+            .collect()
+    })
+    .await
+    .map_err(|err| err.to_string())
 }

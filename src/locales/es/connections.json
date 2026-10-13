@@ -24,7 +24,8 @@
     "actions": {
       "active": "Active",
       "closed": "Closed",
-      "closeConnection": "Cerrar conexión"
+      "closeConnection": "Cerrar conexión",
+      "routeProcess": "Route this process"
     },
     "columnManager": {
       "title": "Columnas",

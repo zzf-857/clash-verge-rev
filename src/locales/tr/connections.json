@@ -24,7 +24,8 @@
     "actions": {
       "active": "Active",
       "closed": "Closed",
-      "closeConnection": "Bağlantıyı Kapat"
+      "closeConnection": "Bağlantıyı Kapat",
+      "routeProcess": "Route this process"
     },
     "columnManager": {
       "title": "Sütunlar",

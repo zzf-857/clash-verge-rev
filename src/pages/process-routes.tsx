@@ -21,6 +21,7 @@ import {
 import { useLockFn } from 'ahooks'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useLocation, useNavigate } from 'react-router'
 
 import { BasePage } from '@/components/base'
 import {
@@ -36,7 +37,10 @@ import { ProcessPicker } from '@/components/process-route/process-picker'
 import {
   GROUP_COLORS,
   type ProcessApp,
+  type ProcessPickState,
+  appKey,
   createGroupId,
+  groupProcesses,
   routePolicy,
   sameMatcher,
 } from '@/components/process-route/process-utils'
@@ -89,6 +93,32 @@ const ProcessRoutesPage = () => {
     if (pageVisible) void refresh()
   }, [pageVisible, refresh])
 
+  // Opened from a connection's detail: resolve the process once the list is loaded.
+  const location = useLocation()
+  const navigate = useNavigate()
+  const [pickRequest, setPickRequest] = useState(
+    () => (location.state as ProcessPickState | null)?.pick ?? null,
+  )
+  useEffect(() => {
+    if (location.state)
+      navigate(location.pathname, { replace: true, state: null })
+  }, [location.pathname, location.state, navigate])
+  const requestedApp = useMemo<ProcessApp | null>(() => {
+    if (!pickRequest || !processes) return null
+    const key = appKey(pickRequest.name, pickRequest.exe)
+    return (
+      groupProcesses(processes).get(key) ?? {
+        key,
+        name: pickRequest.name,
+        label: pickRequest.name,
+        exe: pickRequest.exe,
+        pids: [],
+        memory: 0,
+      }
+    )
+  }, [pickRequest, processes])
+  const dialogApp = pickedApp ?? requestedApp
+
   useEffect(() => {
     if (!highlightId) return
     const timer = setTimeout(() => setHighlightId(null), 1400)
@@ -101,7 +131,7 @@ const ProcessRoutesPage = () => {
   const stats = useMemo(() => {
     const map = new Map<string, GroupStats>()
     for (const group of groups) {
-      map.set(group.id, { connections: 0, traffic: 0 })
+      map.set(group.id, { connections: 0, traffic: 0, up: 0, down: 0 })
     }
     for (const conn of connData.activeConnections) {
       for (const group of groups) {
@@ -109,6 +139,8 @@ const ProcessRoutesPage = () => {
           const entry = map.get(group.id)!
           entry.connections += 1
           entry.traffic += conn.upload + conn.download
+          entry.up += conn.curUpload ?? 0
+          entry.down += conn.curDownload ?? 0
         }
       }
     }
@@ -315,15 +347,18 @@ const ProcessRoutesPage = () => {
         </Box>
       </Box>
 
-      {pickedApp && (
+      {dialogApp && (
         <AddProcessDialog
           // Remount per app so selections never leak between processes.
-          key={pickedApp.key}
-          app={pickedApp}
+          key={dialogApp.key}
+          app={dialogApp}
           processes={processes ?? []}
           groups={groups}
           defaultGroupId={targetGroupId}
-          onClose={() => setPickedApp(null)}
+          onClose={() => {
+            setPickedApp(null)
+            setPickRequest(null)
+          }}
           onConfirm={handleConfirm}
         />
       )}

@@ -7219,13 +7219,17 @@ dependencies = [
 name = "tauri-plugin-clash-verge-sysinfo"
 version = "0.1.0"
 dependencies = [
+ "base64 0.23.1",
  "deelevate",
  "libc",
  "parking_lot",
+ "plist",
+ "png 0.18.1",
  "serde",
  "sysinfo",
  "tauri",
  "tauri-plugin-clipboard-manager",
+ "windows-sys 0.61.2",
 ]
 
 [[package]]

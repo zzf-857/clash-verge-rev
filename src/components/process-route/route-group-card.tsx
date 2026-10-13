@@ -32,7 +32,12 @@ import { GROUP_COLORS, matcherLabel, routePolicy } from './process-utils'
 export interface GroupStats {
   connections: number
   traffic: number
+  /** Bytes per second across the group's active connections */
+  up: number
+  down: number
 }
+
+const formatSpeed = (value: number) => `${parseTraffic(value).join(' ')}/s`
 
 interface Props {
   group: IProcessRouteGroup
@@ -264,10 +269,29 @@ export const RouteGroupCard = ({
           >
             {t('process.group.processes')} · {group.matchers.length}
           </Typography>
-          {!!stats?.traffic && (
-            <Typography sx={{ fontSize: 11.5, color: 'text.secondary' }}>
-              {parseTraffic(stats.traffic).join(' ')}
+          {stats && (stats.up > 0 || stats.down > 0) ? (
+            <Typography
+              sx={{
+                fontSize: 11.5,
+                color: 'text.secondary',
+                fontVariantNumeric: 'tabular-nums',
+              }}
+            >
+              <Box component="span" sx={{ color: 'warning.main' }}>
+                ↑
+              </Box>{' '}
+              {formatSpeed(stats.up)}{' '}
+              <Box component="span" sx={{ color: 'info.main', ml: 0.5 }}>
+                ↓
+              </Box>{' '}
+              {formatSpeed(stats.down)}
             </Typography>
+          ) : (
+            !!stats?.traffic && (
+              <Typography sx={{ fontSize: 11.5, color: 'text.secondary' }}>
+                {parseTraffic(stats.traffic).join(' ')}
+              </Typography>
+            )
           )}
         </Box>
         <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.75 }}>
@@ -470,6 +494,7 @@ const MatcherChip = ({
       >
         <ProcessAvatar
           name={label}
+          exe={matcher.kind === 'PROCESS-PATH' ? matcher.value : null}
           size={22}
           folder={matcher.kind === 'PROCESS-PATH-REGEX'}
         />

@@ -4,6 +4,9 @@ use std::{
 };
 
 pub mod commands;
+mod icons;
+
+pub use icons::executable_icon;
 
 #[cfg(windows)]
 use deelevate::{PrivilegeLevel, Token};

@@ -2,16 +2,41 @@ import { FolderRounded } from '@mui/icons-material'
 import { Box } from '@mui/material'
 
 import { avatarColor, displayName } from './process-utils'
+import { useProcessIcon } from './use-process-icon'
 
 interface Props {
   name: string
+  /** Executable whose system icon replaces the letter avatar when available */
+  exe?: string | null
   size?: number
   folder?: boolean
 }
 
-export const ProcessAvatar = ({ name, size = 32, folder }: Props) => {
+export const ProcessAvatar = ({ name, exe, size = 32, folder }: Props) => {
   const label = displayName(name)
   const color = avatarColor(label)
+  const icon = useProcessIcon(folder ? null : exe)
+  if (icon) {
+    return (
+      <Box
+        component="img"
+        src={icon}
+        alt=""
+        draggable={false}
+        sx={{
+          width: size,
+          height: size,
+          flexShrink: 0,
+          objectFit: 'contain',
+          userSelect: 'none',
+          animation: 'pr-icon-in .2s ease',
+          '@keyframes pr-icon-in': {
+            from: { opacity: 0, transform: 'scale(.85)' },
+          },
+        }}
+      />
+    )
+  }
   return (
     <Box
       aria-hidden

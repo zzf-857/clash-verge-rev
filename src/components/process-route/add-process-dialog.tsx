@@ -38,6 +38,7 @@ import {
   displayName,
   findRelatedApps,
   installDirOf,
+  isAppBundle,
   isGenericRuntime,
   routePolicy,
   shortenPath,
@@ -171,7 +172,11 @@ export const AddProcessDialog = ({
     icon: ReactNode
     disabled: boolean
   }[] = [
-    { value: 'path', icon: <DescriptionRounded />, disabled: !app.exe },
+    {
+      value: 'path',
+      icon: <DescriptionRounded />,
+      disabled: !app.exe || isAppBundle(app.exe),
+    },
     { value: 'name', icon: <TextFieldsRounded />, disabled: false },
     { value: 'dir', icon: <FolderRounded />, disabled: !installDir },
   ]
@@ -199,7 +204,7 @@ export const AddProcessDialog = ({
           transition: 'background .3s',
         }}
       >
-        <ProcessAvatar name={app.label} size={48} />
+        <ProcessAvatar name={app.label} exe={app.exe} size={48} />
         <Box sx={{ minWidth: 0 }}>
           <Typography sx={{ fontSize: 18, fontWeight: 700 }} noWrap>
             {displayName(app.label)}
@@ -371,7 +376,7 @@ export const AddProcessDialog = ({
                     onChange={() => toggle(item.key)}
                     sx={{ '&.Mui-checked': { color: accent } }}
                   />
-                  <ProcessAvatar name={item.label} size={24} />
+                  <ProcessAvatar name={item.label} exe={item.exe} size={24} />
                   <Box sx={{ minWidth: 0, flex: 1 }}>
                     <Typography noWrap sx={{ fontSize: 13, fontWeight: 500 }}>
                       {displayName(item.label)}

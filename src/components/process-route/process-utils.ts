@@ -21,6 +21,11 @@ export interface ProcessApp {
   memory: number
 }
 
+/** Router state that asks the routing page to open the add dialog for a process. */
+export interface ProcessPickState {
+  pick: { name: string; exe: string | null }
+}
+
 export interface RelatedApp extends ProcessApp {
   relation: 'child' | 'sameDir'
   generic: boolean
@@ -95,7 +100,9 @@ const SHARED_DIR_PATTERN = new RegExp(
     String.raw`^/(home|Users)/[^/]+(/\.local)?/bin$`,
     String.raw`^/applications$`,
     String.raw`^[a-z]:\\windows(\\(system32|syswow64))?$`,
-    String.raw`\\windowsapps$`,
+    String.raw`^[a-z]:\\program files( \(x86\))?$`,
+    String.raw`^[a-z]:\\users\\[^\\]+(\\\.local)?\\bin$`,
+    String.raw`\\(windowsapps|scoop\\shims|chocolatey\\bin)$`,
   ].join('|'),
   'i',
 )
@@ -118,6 +125,9 @@ const samePath = (left: string, right: string) =>
     : left === right
 
 export const appKey = (name: string, exe: string | null) => exe || name
+
+/** A macOS bundle picked in the file dialog; its real binary lives inside it. */
+export const isAppBundle = (exe: string | null) => !!exe && /\.app$/i.test(exe)
 
 const VERSION_NAME = /^v?\d+(\.\d+)+$/
 
@@ -241,7 +251,7 @@ export const buildMatcher = (
       }
     }
   }
-  if (mode !== 'name' && app.exe) {
+  if (mode !== 'name' && app.exe && !isAppBundle(app.exe)) {
     return { kind: 'PROCESS-PATH', value: app.exe, label }
   }
   return { kind: 'PROCESS-NAME', value: app.name, label }

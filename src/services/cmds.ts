@@ -301,6 +301,10 @@ export async function listProcesses() {
   return invoke<IProcessEntry[]>('list_processes')
 }
 
+export async function getProcessIcons(paths: string[]) {
+  return invoke<Record<string, string>>('get_process_icons', { paths })
+}
+
 export async function copyIconFile(
   path: string,
   name: 'common' | 'sysproxy' | 'tun',
