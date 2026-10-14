@@ -112,6 +112,10 @@ pub struct PrfOption {
     pub proxies: Option<String>,
 
     pub groups: Option<String>,
+
+    /// Loopback proxy port that takes precedence over `self_proxy` and `with_proxy`
+    #[serde(skip)]
+    pub loopback_proxy: Option<u16>,
 }
 
 impl PrfOption {
@@ -253,7 +257,9 @@ impl PrfItem {
         let mut proxies = option.and_then(|o| o.proxies.clone());
         let mut groups = option.and_then(|o| o.groups.clone());
 
-        let proxy_type = if self_proxy {
+        let proxy_type = if let Some(port) = option.and_then(|o| o.loopback_proxy) {
+            ProxyType::Loopback(port)
+        } else if self_proxy {
             ProxyType::Localhost
         } else if with_proxy {
             ProxyType::System

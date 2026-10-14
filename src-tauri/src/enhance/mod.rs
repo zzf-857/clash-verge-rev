@@ -5,6 +5,7 @@ mod process_route;
 mod script;
 pub mod seq;
 mod tun;
+pub mod update_route;
 
 use self::{
     chain::{AsyncChainItemFrom as _, ChainItem, ChainType},
@@ -14,6 +15,7 @@ use self::{
     script::use_script,
     seq::{SeqMap, use_seq},
     tun::use_tun,
+    update_route::use_update_route,
 };
 use crate::config::dns::{DnsOverrideState, dns_override_source};
 use crate::utils::dirs;
@@ -826,6 +828,7 @@ pub async fn enhance(
     let config = authoritative.enforce(config);
     let config = ensure_lan_bind_address(config);
     let config = use_process_routes(config, &process_route_groups);
+    let config = use_update_route(config);
 
     let config = cleanup_proxy_groups(config);
     let config = use_sort(config);

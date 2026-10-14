@@ -2,6 +2,7 @@ use crate::{
     cmd,
     config::{Config, PrfItem, PrfOption, profiles::profiles_update_item_safe},
     core::{CoreManager, handle, tray, validate::ValidationOutcome},
+    enhance::update_route::{UPDATE_GROUP, update_route_port},
     utils::help::{mask_err, mask_url},
 };
 use anyhow::{Result, bail};
@@ -100,6 +101,27 @@ async fn should_update_profile(uid: &String, ignore_auto_update: bool) -> Result
     }
 }
 
+/// Points the update route at the fastest live node, so an update does not depend on the node the
+/// user is on. `None` when the running config has no update route or no node answers.
+async fn prepare_update_route() -> Option<u16> {
+    let port = update_route_port()?;
+    let test_url = Config::verge()
+        .await
+        .latest_arc()
+        .default_latency_test
+        .clone()
+        .filter(|url| !url.is_empty())
+        .unwrap_or_else(|| "http://cp.cloudflare.com/generate_204".into());
+    let mihomo = handle::Handle::mihomo();
+    let delays = mihomo.delay_group(UPDATE_GROUP, &test_url, 5000).await.ok()?;
+    let (node, _) = delays
+        .into_iter()
+        .filter(|(_, delay)| *delay > 0)
+        .min_by_key(|(_, delay)| *delay)?;
+    mihomo.select_node_for_group(UPDATE_GROUP, &node).await.ok()?;
+    Some(port)
+}
+
 #[tracing::instrument(skip_all, level = "info", fields(uid = %uid, strategy = tracing::field::Empty))]
 async fn perform_profile_update(
     uid: &String,
@@ -130,6 +152,31 @@ async fn perform_profile_update(
                 "[订阅更新] 直接更新失败: {}，尝试使用Clash代理更新",
                 mask_err(&format!("{err:#}"))
             );
+        }
+    }
+
+    if let Some(port) = prepare_update_route().await {
+        let mut route_opt = merged_opt.clone().unwrap_or_default();
+        route_opt.loopback_proxy = Some(port);
+        match PrfItem::from_url(url, None, None, Some(&route_opt)).await {
+            Ok(mut item) => {
+                logging!(
+                    info,
+                    Type::Config,
+                    "[订阅更新] 使用 Clash代理(可用节点) 更新订阅配置成功"
+                );
+                profiles_update_item_safe(uid, &mut item).await?;
+                handle::Handle::notice_message("update_with_clash_proxy", profile_name);
+                return Ok(());
+            }
+            Err(err) => {
+                logging!(
+                    warn,
+                    Type::Config,
+                    "[订阅更新] 通过可用节点更新失败: {}",
+                    mask_err(&format!("{err:#}"))
+                );
+            }
         }
     }
 
