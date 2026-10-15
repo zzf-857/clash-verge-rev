@@ -1,5 +1,6 @@
 import {
   AddRounded,
+  BlockRounded,
   CloseRounded,
   DeleteOutlineRounded,
   EditRounded,
@@ -42,6 +43,8 @@ const formatSpeed = (value: number) => `${parseTraffic(value).join(' ')}/s`
 interface Props {
   group: IProcessRouteGroup
   existingGroup?: boolean
+  /** The profile group this group routes into no longer exists */
+  targetMissing?: boolean
   configuredMatchers?: IProcessMatcher[]
   stats: GroupStats | undefined
   highlighted: boolean
@@ -64,6 +67,7 @@ const KIND_LABEL: Record<ProcessMatchKind, string> = {
 export const RouteGroupCard = ({
   group,
   existingGroup = false,
+  targetMissing = false,
   configuredMatchers = EMPTY_MATCHERS,
   stats,
   highlighted,
@@ -241,12 +245,21 @@ export const RouteGroupCard = ({
             alignItems: 'center',
             gap: 0.5,
             mt: -1,
-            color: 'text.secondary',
+            color: targetMissing ? 'error.main' : 'text.secondary',
           }}
         >
-          <LinkRounded sx={{ fontSize: 14 }} />
+          {targetMissing ? (
+            <BlockRounded sx={{ fontSize: 14 }} />
+          ) : (
+            <LinkRounded sx={{ fontSize: 14 }} />
+          )}
           <Typography sx={{ fontSize: 12 }} noWrap>
-            {t('process.group.linked', { name: group.target })}
+            {t(
+              targetMissing
+                ? 'process.group.targetMissing'
+                : 'process.group.linked',
+              { name: group.target },
+            )}
           </Typography>
         </Box>
       )}

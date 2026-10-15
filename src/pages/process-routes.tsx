@@ -108,6 +108,15 @@ const ProcessRoutesPage = () => {
       })),
     [groups, configuredMatchers],
   )
+  const missingTargetIds = useMemo(() => {
+    if (!runtimeGroups) return new Set<string>()
+    const names = new Set(runtimeGroups.map((group) => group.name))
+    return new Set(
+      storedGroups
+        .filter((group) => group.target && !names.has(group.target))
+        .map((group) => group.id),
+    )
+  }, [runtimeGroups, storedGroups])
   const existingGroupIds = useMemo(
     () =>
       new Set(
@@ -383,6 +392,7 @@ const ProcessRoutesPage = () => {
                   key={group.id}
                   group={group}
                   existingGroup={existingGroupIds.has(group.id)}
+                  targetMissing={missingTargetIds.has(group.id)}
                   configuredMatchers={configuredMatchers.get(
                     routePolicy(group),
                   )}

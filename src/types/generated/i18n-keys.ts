@@ -225,6 +225,7 @@ export const translationKeys = [
   'process.group.deleteConfirm',
   'process.group.color',
   'process.group.linked',
+  'process.group.targetMissing',
   'process.kinds.name',
   'process.kinds.path',
   'process.kinds.dir',

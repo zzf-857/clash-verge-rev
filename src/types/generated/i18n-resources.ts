@@ -347,6 +347,7 @@ export interface TranslationResources {
         rename: string
         resume: string
         searchNode: string
+        targetMissing: string
         testDelay: string
       }
       kinds: {

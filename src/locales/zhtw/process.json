@@ -99,7 +99,8 @@
     "delete": "刪除分組",
     "deleteConfirm": "再次點擊確認刪除",
     "color": "更換顏色",
-    "linked": "指向訂閱策略組「{{name}}」"
+    "linked": "指向訂閱策略組「{{name}}」· 出口與其他流量共用",
+    "targetMissing": "訂閱中沒有策略組「{{name}}」· 這些程式的流量已被攔截"
   },
   "kinds": {
     "name": "進程名",

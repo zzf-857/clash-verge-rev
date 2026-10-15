@@ -99,7 +99,8 @@
     "delete": "Delete group",
     "deleteConfirm": "Click again to delete",
     "color": "Change color",
-    "linked": "Routes into profile group {{name}}"
+    "linked": "Routes into profile group {{name}} · exit shared with other traffic",
+    "targetMissing": "Profile group {{name}} not found · these apps are blocked"
   },
   "kinds": {
     "name": "Process name",

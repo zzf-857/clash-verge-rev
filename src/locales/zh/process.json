@@ -99,7 +99,8 @@
     "delete": "删除分组",
     "deleteConfirm": "再次点击确认删除",
     "color": "更换颜色",
-    "linked": "指向订阅策略组「{{name}}」"
+    "linked": "指向订阅策略组「{{name}}」· 出口与其他流量共用",
+    "targetMissing": "订阅中没有策略组「{{name}}」· 这些程序的流量已被拦截"
   },
   "kinds": {
     "name": "进程名",

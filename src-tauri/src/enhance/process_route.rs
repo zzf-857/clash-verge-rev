@@ -74,15 +74,17 @@ pub fn use_process_routes(mut config: Mapping, groups: &[IProcessRouteGroup]) ->
     for group in groups {
         let policy = match group.target.as_deref().filter(|target| !target.is_empty()) {
             Some(target) if existing.contains(target) => target.to_owned(),
+            // Pinned apps must never fall through to the profile's own rules, which may send
+            // them out directly; with the exit gone their traffic is blocked instead.
             Some(target) => {
                 logging!(
                     warn,
                     Type::Config,
-                    "process route group '{}' targets missing proxy group '{}', skipped",
+                    "process route group '{}' targets missing proxy group '{}', its processes are blocked",
                     group.name,
                     target
                 );
-                continue;
+                "REJECT".to_owned()
             }
             None => {
                 let name = group.name.trim().to_owned();
@@ -180,6 +182,7 @@ mod tests {
             [
                 "PROCESS-PATH,/usr/bin/claude,AI",
                 "PROCESS-PATH,/usr/bin/git,Proxy",
+                "PROCESS-PATH,/usr/bin/curl,REJECT",
                 "MATCH,Proxy"
             ]
         );
