@@ -86,6 +86,7 @@
     "searchNode": "Search nodes",
     "testDelay": "Test latency",
     "noNodes": "No nodes",
+    "fromConfiguration": "Хәзерге конфигурациядән; өстен чыгу өчен программаны башка төркемгә өстәгез",
     "processes": "Processes",
     "addProcess": "Add",
     "emptyProcesses": "Add a process",

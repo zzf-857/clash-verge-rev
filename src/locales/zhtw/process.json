@@ -86,6 +86,7 @@
     "searchNode": "搜索節點",
     "testDelay": "測試延遲",
     "noNodes": "沒有節點",
+    "fromConfiguration": "來自目前設定；將程式加入其他分組即可覆寫此規則",
     "processes": "進程",
     "addProcess": "添加",
     "emptyProcesses": "添加進程",

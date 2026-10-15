@@ -86,6 +86,7 @@
     "searchNode": "Search nodes",
     "testDelay": "Test latency",
     "noNodes": "No nodes",
+    "fromConfiguration": "من الإعداد الحالي؛ أضف البرنامج إلى مجموعة أخرى لتجاوزه",
     "processes": "Processes",
     "addProcess": "Add",
     "emptyProcesses": "Add a process",

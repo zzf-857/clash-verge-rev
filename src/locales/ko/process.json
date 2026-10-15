@@ -86,6 +86,7 @@
     "searchNode": "Search nodes",
     "testDelay": "Test latency",
     "noNodes": "No nodes",
+    "fromConfiguration": "현재 구성에서 가져옴; 다른 그룹에 추가하면 이 규칙을 덮어씁니다",
     "processes": "Processes",
     "addProcess": "Add",
     "emptyProcesses": "Add a process",

@@ -86,6 +86,7 @@
     "searchNode": "Search nodes",
     "testDelay": "Test latency",
     "noNodes": "No nodes",
+    "fromConfiguration": "Geçerli yapılandırmadan; geçersiz kılmak için programı başka bir gruba ekleyin",
     "processes": "Processes",
     "addProcess": "Add",
     "emptyProcesses": "Add a process",

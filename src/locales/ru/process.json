@@ -86,6 +86,7 @@
     "searchNode": "Search nodes",
     "testDelay": "Test latency",
     "noNodes": "No nodes",
+    "fromConfiguration": "Из текущей конфигурации; добавьте программу в другую группу, чтобы переопределить правило",
     "processes": "Processes",
     "addProcess": "Add",
     "emptyProcesses": "Add a process",

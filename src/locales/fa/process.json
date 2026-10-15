@@ -86,6 +86,7 @@
     "searchNode": "Search nodes",
     "testDelay": "Test latency",
     "noNodes": "No nodes",
+    "fromConfiguration": "از پیکربندی فعلی؛ برای جایگزینی، برنامه را به گروه دیگری اضافه کنید",
     "processes": "Processes",
     "addProcess": "Add",
     "emptyProcesses": "Add a process",

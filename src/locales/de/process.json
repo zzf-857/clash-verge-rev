@@ -86,6 +86,7 @@
     "searchNode": "Search nodes",
     "testDelay": "Test latency",
     "noNodes": "No nodes",
+    "fromConfiguration": "Aus der aktuellen Konfiguration; zum Überschreiben das Programm einer anderen Gruppe hinzufügen",
     "processes": "Processes",
     "addProcess": "Add",
     "emptyProcesses": "Add a process",

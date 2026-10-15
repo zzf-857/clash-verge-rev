@@ -86,6 +86,7 @@
     "searchNode": "Search nodes",
     "testDelay": "Test latency",
     "noNodes": "No nodes",
+    "fromConfiguration": "現在の設定由来です。別のグループに追加すると上書きできます",
     "processes": "Processes",
     "addProcess": "Add",
     "emptyProcesses": "Add a process",
