@@ -53,6 +53,7 @@ import {
   type GroupStats,
   RouteGroupCard,
 } from '@/components/process-route/route-group-card'
+import { rememberProcessExes } from '@/components/process-route/use-process-icon'
 import { useProcessRouteGroups } from '@/components/process-route/use-process-route-groups'
 import { useConnectionData } from '@/hooks/use-connection-data'
 import { useSystemState } from '@/hooks/use-system-state'
@@ -181,6 +182,18 @@ const ProcessRoutesPage = () => {
   const {
     response: { data: connData },
   } = useConnectionData()
+  useEffect(() => {
+    if (processes) rememberProcessExes(processes)
+  }, [processes])
+  useEffect(() => {
+    rememberProcessExes(
+      connData.activeConnections.map(({ metadata }) => ({
+        name: metadata.process ?? '',
+        exe: metadata.processPath,
+      })),
+    )
+  }, [connData.activeConnections])
+
   const stats = useMemo(() => {
     const map = new Map<string, GroupStats>()
     for (const group of groups) {

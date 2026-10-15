@@ -479,7 +479,7 @@ const ProcessRow = memo(function ProcessRow({
         },
       }}
     >
-      <ProcessAvatar name={app.label} exe={app.exe} />
+      <ProcessAvatar name={app.label} exe={app.exe} processName={app.name} />
       <Box sx={{ minWidth: 0, flex: 1 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
           <Typography noWrap sx={{ fontSize: 13.5, fontWeight: 600 }}>

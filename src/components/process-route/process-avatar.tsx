@@ -8,14 +8,25 @@ interface Props {
   name: string
   /** Executable whose system icon replaces the letter avatar when available */
   exe?: string | null
+  /** Process name whose namesakes lend their icon when `exe` is unknown */
+  processName?: string
   size?: number
   folder?: boolean
 }
 
-export const ProcessAvatar = ({ name, exe, size = 32, folder }: Props) => {
+export const ProcessAvatar = ({
+  name,
+  exe,
+  processName,
+  size = 32,
+  folder,
+}: Props) => {
   const label = displayName(name)
   const color = avatarColor(label)
-  const icon = useProcessIcon(folder ? null : exe)
+  const icon = useProcessIcon(
+    folder ? null : exe,
+    folder ? undefined : processName,
+  )
   if (icon) {
     return (
       <Box

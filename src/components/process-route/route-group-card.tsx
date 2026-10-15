@@ -516,6 +516,9 @@ const MatcherChip = ({
         <ProcessAvatar
           name={label}
           exe={matcher.kind === 'PROCESS-PATH' ? matcher.value : null}
+          processName={
+            matcher.kind === 'PROCESS-NAME' ? matcher.value : undefined
+          }
           size={22}
           folder={matcher.kind === 'PROCESS-PATH-REGEX'}
         />

@@ -6,6 +6,10 @@ import { getProcessIcons } from '@/services/cmds'
 const icons = new Map<string, string | null>()
 const queued = new Set<string>()
 const listeners = new Set<() => void>()
+// An executable seen for each process name, so name-only matchers and processes whose path
+// is unreadable still get the icon of their namesakes.
+const exeByName = new Map<string, string>()
+const nameKey = (name: string) => name.toLowerCase()
 let timer: ReturnType<typeof setTimeout> | null = null
 
 const flush = async () => {
@@ -35,11 +39,30 @@ const subscribe = (listener: () => void) => {
   }
 }
 
-export const useProcessIcon = (exe: string | null | undefined) => {
+export const rememberProcessExes = (
+  entries: Iterable<{ name: string; exe: string | null | undefined }>,
+) => {
+  let changed = false
+  for (const { name, exe } of entries) {
+    if (!name || !exe || exeByName.has(nameKey(name))) continue
+    exeByName.set(nameKey(name), exe)
+    changed = true
+  }
+  if (changed) listeners.forEach((listener) => listener())
+}
+
+export const useProcessIcon = (
+  exe: string | null | undefined,
+  processName?: string,
+) => {
+  const source = useSyncExternalStore(
+    subscribe,
+    () => exe || (processName && exeByName.get(nameKey(processName))) || null,
+  )
   useEffect(() => {
-    if (exe) request(exe)
-  }, [exe])
+    if (source) request(source)
+  }, [source])
   return useSyncExternalStore(subscribe, () =>
-    exe ? (icons.get(exe) ?? null) : null,
+    source ? (icons.get(source) ?? null) : null,
   )
 }
