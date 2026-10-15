@@ -41,6 +41,8 @@ const formatSpeed = (value: number) => `${parseTraffic(value).join(' ')}/s`
 
 interface Props {
   group: IProcessRouteGroup
+  existingGroup?: boolean
+  configuredMatchers?: IProcessMatcher[]
   stats: GroupStats | undefined
   highlighted: boolean
   picking: boolean
@@ -51,6 +53,8 @@ interface Props {
   onAddProcess: () => void
 }
 
+const EMPTY_MATCHERS: IProcessMatcher[] = []
+
 const KIND_LABEL: Record<ProcessMatchKind, string> = {
   'PROCESS-NAME': 'process.kinds.name',
   'PROCESS-PATH': 'process.kinds.path',
@@ -59,6 +63,8 @@ const KIND_LABEL: Record<ProcessMatchKind, string> = {
 
 export const RouteGroupCard = ({
   group,
+  existingGroup = false,
+  configuredMatchers = EMPTY_MATCHERS,
   stats,
   highlighted,
   picking,
@@ -73,6 +79,7 @@ export const RouteGroupCard = ({
   const isDark = theme.palette.mode === 'dark'
   const accent = group.color ?? GROUP_COLORS[0]
   const enabled = group.enabled ?? true
+  const matcherCount = group.matchers.length + configuredMatchers.length
   const [menuAnchor, setMenuAnchor] = useState<HTMLElement | null>(null)
   const [confirmDelete, setConfirmDelete] = useState(false)
   const [colorAnchor, setColorAnchor] = useState<HTMLElement | null>(null)
@@ -150,6 +157,7 @@ export const RouteGroupCard = ({
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
         <Tooltip title={t('process.group.color')}>
           <ButtonBase
+            disabled={existingGroup}
             onClick={(event) => setColorAnchor(event.currentTarget)}
             sx={{
               width: 12,
@@ -181,13 +189,13 @@ export const RouteGroupCard = ({
         ) : (
           <Typography
             noWrap
-            onDoubleClick={() => setEditing(true)}
+            onDoubleClick={existingGroup ? undefined : () => setEditing(true)}
             sx={{
               flex: 1,
               fontWeight: 700,
               fontSize: 15,
               opacity: enabled ? 1 : 0.55,
-              cursor: 'text',
+              cursor: existingGroup ? 'default' : 'text',
             }}
           >
             {group.name}
@@ -196,28 +204,34 @@ export const RouteGroupCard = ({
 
         <StatusPill active={active} enabled={enabled} />
 
-        <Tooltip
-          title={enabled ? t('process.group.pause') : t('process.group.resume')}
-        >
-          <Switch
-            checked={enabled}
-            onChange={(_, checked) => onChange({ enabled: checked })}
-            sx={{
-              flexShrink: 0,
-              '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
-                backgroundColor: accent,
-              },
-            }}
-          />
-        </Tooltip>
-        <IconButton
-          size="small"
-          onClick={(event: MouseEvent<HTMLElement>) =>
-            setMenuAnchor(event.currentTarget)
-          }
-        >
-          <MoreHorizRounded fontSize="small" />
-        </IconButton>
+        {!existingGroup && (
+          <>
+            <Tooltip
+              title={
+                enabled ? t('process.group.pause') : t('process.group.resume')
+              }
+            >
+              <Switch
+                checked={enabled}
+                onChange={(_, checked) => onChange({ enabled: checked })}
+                sx={{
+                  flexShrink: 0,
+                  '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+                    backgroundColor: accent,
+                  },
+                }}
+              />
+            </Tooltip>
+            <IconButton
+              size="small"
+              onClick={(event: MouseEvent<HTMLElement>) =>
+                setMenuAnchor(event.currentTarget)
+              }
+            >
+              <MoreHorizRounded fontSize="small" />
+            </IconButton>
+          </>
+        )}
       </Box>
 
       {group.target && (
@@ -267,7 +281,7 @@ export const RouteGroupCard = ({
           <Typography
             sx={{ fontSize: 12, color: 'text.secondary', fontWeight: 600 }}
           >
-            {t('process.group.processes')} · {group.matchers.length}
+            {t('process.group.processes')} · {matcherCount}
           </Typography>
           {stats && (stats.up > 0 || stats.down > 0) ? (
             <Typography
@@ -295,6 +309,12 @@ export const RouteGroupCard = ({
           )}
         </Box>
         <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.75 }}>
+          {configuredMatchers.map((matcher) => (
+            <MatcherChip
+              key={`configured:${matcher.kind}:${matcher.value}`}
+              matcher={matcher}
+            />
+          ))}
           {group.matchers.map((matcher) => (
             <MatcherChip
               key={`${matcher.kind}:${matcher.value}`}
@@ -319,7 +339,7 @@ export const RouteGroupCard = ({
             }}
           >
             <AddRounded sx={{ fontSize: 16 }} />
-            {group.matchers.length
+            {matcherCount
               ? t('process.group.addProcess')
               : t('process.group.emptyProcesses')}
           </ButtonBase>
@@ -453,7 +473,7 @@ const MatcherChip = ({
   onRemove,
 }: {
   matcher: IProcessMatcher
-  onRemove: () => void
+  onRemove?: () => void
 }) => {
   const { t } = useTranslation()
   const label = matcherLabel(matcher)
@@ -462,6 +482,7 @@ const MatcherChip = ({
       title={
         <Box>
           <Box sx={{ fontWeight: 700 }}>{t(KIND_LABEL[matcher.kind])}</Box>
+          {!onRemove && <Box>{t('process.group.fromConfiguration')}</Box>}
           <Box
             sx={{
               fontFamily: 'ui-monospace, monospace',
@@ -504,14 +525,20 @@ const MatcherChip = ({
         >
           {label}
         </Typography>
-        <IconButton
-          className="pr-remove"
-          size="small"
-          onClick={onRemove}
-          sx={{ p: 0.25, transition: 'opacity .15s' }}
-        >
-          <CloseRounded sx={{ fontSize: 14 }} />
-        </IconButton>
+        {onRemove ? (
+          <IconButton
+            className="pr-remove"
+            size="small"
+            onClick={onRemove}
+            sx={{ p: 0.25, transition: 'opacity .15s' }}
+          >
+            <CloseRounded sx={{ fontSize: 14 }} />
+          </IconButton>
+        ) : (
+          <LinkRounded
+            sx={{ fontSize: 13, mx: 0.5, color: 'text.secondary' }}
+          />
+        )}
       </Box>
     </Tooltip>
   )

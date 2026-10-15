@@ -28,6 +28,11 @@ import {
   type AddProcessResult,
   AddProcessDialog,
 } from '@/components/process-route/add-process-dialog'
+import { configuredProcessMatchers } from '@/components/process-route/configured-matchers'
+import {
+  mergeProcessRouteGroups,
+  updateProcessRouteGroups,
+} from '@/components/process-route/existing-groups'
 import {
   isDraftValid,
   useGroupDraft,
@@ -56,6 +61,8 @@ import { useVisibility } from '@/hooks/use-visibility'
 import {
   useAppRefreshers,
   useClashConfigData,
+  useProxiesData,
+  useRulesData,
 } from '@/providers/app-data-context'
 import { listProcesses, patchClashMode } from '@/services/cmds'
 import { showNotice } from '@/services/notice-service'
@@ -65,11 +72,57 @@ const ProcessRoutesPage = () => {
   const { t } = useTranslation()
   const theme = useTheme()
   const pageVisible = useVisibility()
-  const { groups, saving, updateGroups } = useProcessRouteGroups()
+  const {
+    groups: storedGroups,
+    saving,
+    updateGroups: updateStoredGroups,
+  } = useProcessRouteGroups()
   const { verge, mutateVerge, patchVerge } = useVerge()
   const { isTunModeAvailable } = useSystemState()
   const { clashConfig } = useClashConfigData()
   const { refreshClashConfig } = useAppRefreshers()
+  const { proxyView } = useProxiesData()
+  const runtimeGroups = proxyView?.groups
+  const { rules } = useRulesData()
+  const groupItems = useMemo(
+    () => mergeProcessRouteGroups(storedGroups, runtimeGroups ?? []),
+    [storedGroups, runtimeGroups],
+  )
+  const groups = useMemo(
+    () => groupItems.map((item) => item.group),
+    [groupItems],
+  )
+  const configuredMatchers = useMemo(
+    () => configuredProcessMatchers(rules, storedGroups),
+    [rules, storedGroups],
+  )
+  const pickerGroups = useMemo(
+    () =>
+      groups.map((group) => ({
+        ...group,
+        matchers: [
+          ...(group.enabled === false ? [] : group.matchers),
+          ...(configuredMatchers.get(routePolicy(group)) ?? []),
+        ],
+      })),
+    [groups, configuredMatchers],
+  )
+  const existingGroupIds = useMemo(
+    () =>
+      new Set(
+        groupItems
+          .filter((item) => item.source === 'runtime')
+          .map((item) => item.group.id),
+      ),
+    [groupItems],
+  )
+  const updateGroups = useCallback(
+    (updater: (groups: IProcessRouteGroup[]) => IProcessRouteGroup[]) =>
+      updateStoredGroups((previous) =>
+        updateProcessRouteGroups(previous, runtimeGroups ?? [], updater),
+      ),
+    [runtimeGroups, updateStoredGroups],
+  )
 
   const [processes, setProcesses] = useState<IProcessEntry[]>()
   const [loading, setLoading] = useState(false)
@@ -274,7 +327,7 @@ const ProcessRoutesPage = () => {
         <ProcessPicker
           processes={processes}
           loading={loading}
-          groups={groups}
+          groups={pickerGroups}
           targetGroup={targetGroup}
           onRefresh={refresh}
           onClearTarget={() => setTargetGroupId(null)}
@@ -316,6 +369,10 @@ const ProcessRoutesPage = () => {
                 <RouteGroupCard
                   key={group.id}
                   group={group}
+                  existingGroup={existingGroupIds.has(group.id)}
+                  configuredMatchers={configuredMatchers.get(
+                    routePolicy(group),
+                  )}
                   stats={stats.get(group.id)}
                   highlighted={highlightId === group.id}
                   picking={targetGroupId === group.id}
@@ -353,7 +410,7 @@ const ProcessRoutesPage = () => {
           key={dialogApp.key}
           app={dialogApp}
           processes={processes ?? []}
-          groups={groups}
+          groups={pickerGroups}
           defaultGroupId={targetGroupId}
           onClose={() => {
             setPickedApp(null)

@@ -86,6 +86,7 @@
     "searchNode": "Search nodes",
     "testDelay": "Test latency",
     "noNodes": "No nodes",
+    "fromConfiguration": "From the current configuration; add the process to another group to override it",
     "processes": "Processes",
     "addProcess": "Add",
     "emptyProcesses": "Add a process",

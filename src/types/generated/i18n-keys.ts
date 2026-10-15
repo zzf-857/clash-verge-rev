@@ -211,6 +211,7 @@ export const translationKeys = [
   'process.group.searchNode',
   'process.group.testDelay',
   'process.group.noNodes',
+  'process.group.fromConfiguration',
   'process.group.processes',
   'process.group.addProcess',
   'process.group.emptyProcesses',

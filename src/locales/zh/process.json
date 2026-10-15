@@ -86,6 +86,7 @@
     "searchNode": "搜索节点",
     "testDelay": "测试延迟",
     "noNodes": "没有节点",
+    "fromConfiguration": "来自当前配置；将程序加入其他分组即可覆盖此规则",
     "processes": "进程",
     "addProcess": "添加",
     "emptyProcesses": "添加进程",
