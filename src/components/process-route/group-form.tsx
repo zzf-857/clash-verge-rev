@@ -37,6 +37,7 @@ export const GroupForm = ({
   const profileGroups = useMemo(
     () =>
       (proxyView?.groups ?? [])
+        .filter((group) => !group.hidden && group.name !== 'GLOBAL')
         .map((group) => group.name)
         .filter((name) => !generatedNames.has(name)),
     [generatedNames, proxyView],

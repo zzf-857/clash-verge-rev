@@ -337,6 +337,7 @@ export interface TranslationResources {
         deleteConfirm: string
         emptyProcesses: string
         exit: string
+        fromConfiguration: string
         idle: string
         linked: string
         noNodes: string
