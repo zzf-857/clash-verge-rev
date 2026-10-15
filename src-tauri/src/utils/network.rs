@@ -40,6 +40,8 @@ pub enum ProxyType {
     None,
     Localhost,
     System,
+    /// An HTTP proxy on a loopback port other than the Mixed Port
+    Loopback(u16),
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -232,6 +234,7 @@ impl NetworkManager {
                 let port = MixedPort::desired().await;
                 Some(format!("http://127.0.0.1:{port}"))
             }
+            ProxyType::Loopback(port) => Some(format!("http://127.0.0.1:{port}")),
             ProxyType::System => {
                 if let Ok(p @ Sysproxy { enable: true, .. }) = Sysproxy::get_system_proxy() {
                     Some(format!("http://{}:{}", p.host, p.port))
