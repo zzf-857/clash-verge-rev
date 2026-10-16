@@ -125,5 +125,27 @@
   },
   "notice": {
     "added": "Added {{count}} rule(s) to {{name}}"
+  },
+  "preset": {
+    "button": "Presets",
+    "empty": "No saved presets yet",
+    "summary": "{{count}} groups",
+    "confirmApply": "Click again to apply; replaces the current groups",
+    "delete": "Delete preset",
+    "save": "Save current as preset…",
+    "export": "Export to file…",
+    "import": "Import from file…",
+    "saveTitle": "Save as preset",
+    "name": "Preset name",
+    "saveHint": "Saves all groups, their processes and the exit node each group is using",
+    "overwrite": "Replaces the preset with this name",
+    "cancel": "Cancel",
+    "confirm": "Save",
+    "saved": "Saved preset {{name}}",
+    "applied": "Switched to preset {{name}}",
+    "imported": "Imported preset {{name}}; apply it from Presets",
+    "exported": "Exported to {{path}}",
+    "invalid": "Not a valid process routing preset file",
+    "missingExits": "{{count}} exit nodes are not in the current subscription; kept the previous selection"
   }
 }

@@ -125,5 +125,27 @@
   },
   "notice": {
     "added": "已将 {{count}} 条规则加入「{{name}}」"
+  },
+  "preset": {
+    "button": "方案",
+    "empty": "还没有保存的方案",
+    "summary": "{{count}} 个分组",
+    "confirmApply": "再次点击应用，将替换当前分组",
+    "delete": "删除方案",
+    "save": "保存当前为方案…",
+    "export": "导出到文件…",
+    "import": "从文件导入…",
+    "saveTitle": "保存为方案",
+    "name": "方案名称",
+    "saveHint": "保存所有分组、进程，以及各分组正在使用的出口节点",
+    "overwrite": "将覆盖同名方案",
+    "cancel": "取消",
+    "confirm": "保存",
+    "saved": "已保存方案「{{name}}」",
+    "applied": "已切换到方案「{{name}}」",
+    "imported": "已导入方案「{{name}}」，在「方案」中点击即可应用",
+    "exported": "已导出到 {{path}}",
+    "invalid": "不是有效的分流方案文件",
+    "missingExits": "{{count}} 个出口节点在当前订阅中不存在，已保留原来的选择"
   }
 }

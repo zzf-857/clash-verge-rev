@@ -17,14 +17,14 @@ export const useProcessRouteGroups = () => {
   const pendingRef = useRef<IProcessRouteGroup[] | null>(null)
   const committedRef = useRef<IProcessRouteGroup[] | null>(null)
   const runningRef = useRef(false)
+  const loopRef = useRef<Promise<void> | null>(null)
   if (!runningRef.current && !pendingRef.current) {
     latestRef.current = groups
   }
 
   // Each save regenerates the runtime config, so rapid edits collapse into
   // the latest snapshot instead of queueing one reload per edit.
-  const flush = useCallback(async () => {
-    if (runningRef.current) return
+  const run = useCallback(async () => {
     runningRef.current = true
     setSaving(true)
     try {
@@ -54,7 +54,21 @@ export const useProcessRouteGroups = () => {
     }
   }, [mutateVerge, refreshProxy, refreshRules])
 
-  const updateGroups = useCallback(
+  // Resolves once every queued snapshot, including ones queued while it runs, is applied.
+  const flush = useCallback(() => {
+    loopRef.current ??= (async () => {
+      try {
+        do {
+          await run()
+        } while (pendingRef.current)
+      } finally {
+        loopRef.current = null
+      }
+    })()
+    return loopRef.current
+  }, [run])
+
+  const commitGroups = useCallback(
     (updater: (groups: IProcessRouteGroup[]) => IProcessRouteGroup[]) => {
       committedRef.current ??= latestRef.current
       const next = updater(latestRef.current)
@@ -63,10 +77,17 @@ export const useProcessRouteGroups = () => {
         prev ? { ...prev, process_route_groups: next } : prev,
       )
       pendingRef.current = next
-      void flush()
+      return flush()
     },
     [flush, mutateVerge],
   )
 
-  return { groups, saving, updateGroups }
+  const updateGroups = useCallback(
+    (updater: (groups: IProcessRouteGroup[]) => IProcessRouteGroup[]) => {
+      void commitGroups(updater)
+    },
+    [commitGroups],
+  )
+
+  return { groups, saving, updateGroups, commitGroups }
 }

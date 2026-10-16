@@ -211,6 +211,20 @@ pub struct IVerge {
 
     /// Process routing groups injected into the runtime config as rules and select groups
     pub process_route_groups: Option<Vec<IProcessRouteGroup>>,
+
+    /// Saved process routing setups; only the frontend reads them, the runtime config does not
+    pub process_route_presets: Option<Vec<IProcessRoutePreset>>,
+}
+
+#[derive(Default, Debug, Clone, Deserialize, Serialize)]
+pub struct IProcessRoutePreset {
+    pub id: String,
+    pub name: String,
+    #[serde(default)]
+    pub groups: Vec<IProcessRouteGroup>,
+    /// Node picked in each group's policy when the preset was saved, keyed by policy name
+    #[serde(default)]
+    pub exits: std::collections::HashMap<String, String>,
 }
 
 #[derive(Default, Debug, Clone, Deserialize, Serialize)]
@@ -528,6 +542,7 @@ impl IVerge {
         patch!(home_cards);
         patch!(enable_external_controller);
         patch!(process_route_groups);
+        patch!(process_route_presets);
     }
 
     pub fn get_log_level(&self) -> LevelFilter {

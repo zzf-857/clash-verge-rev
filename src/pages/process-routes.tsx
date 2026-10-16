@@ -38,6 +38,7 @@ import {
   useGroupDraft,
 } from '@/components/process-route/group-draft'
 import { GroupForm } from '@/components/process-route/group-form'
+import { PresetMenu } from '@/components/process-route/preset-menu'
 import { ProcessPicker } from '@/components/process-route/process-picker'
 import {
   GROUP_COLORS,
@@ -77,6 +78,7 @@ const ProcessRoutesPage = () => {
     groups: storedGroups,
     saving,
     updateGroups: updateStoredGroups,
+    commitGroups,
   } = useProcessRouteGroups()
   const { verge, mutateVerge, patchVerge } = useVerge()
   const { isTunModeAvailable } = useSystemState()
@@ -322,6 +324,7 @@ const ProcessRoutesPage = () => {
       header={
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25 }}>
           <SaveIndicator saving={saving} hasGroups={groups.length > 0} />
+          <PresetMenu groups={storedGroups} commitGroups={commitGroups} />
           <Button
             size="small"
             variant="contained"

@@ -947,6 +947,15 @@ interface IVergeConfig {
   hover_jump_navigator_delay?: number
   enable_external_controller?: boolean
   process_route_groups?: IProcessRouteGroup[]
+  process_route_presets?: IProcessRoutePreset[]
+}
+
+interface IProcessRoutePreset {
+  id: string
+  name: string
+  groups: IProcessRouteGroup[]
+  /** Node picked in each group's policy when saved, keyed by policy name */
+  exits: Record<string, string>
 }
 
 type ProcessMatchKind = 'PROCESS-NAME' | 'PROCESS-PATH' | 'PROCESS-PATH-REGEX'

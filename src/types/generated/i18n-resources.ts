@@ -390,6 +390,28 @@ export interface TranslationResources {
         }
         title: string
       }
+      preset: {
+        applied: string
+        button: string
+        cancel: string
+        confirm: string
+        confirmApply: string
+        delete: string
+        empty: string
+        export: string
+        exported: string
+        import: string
+        imported: string
+        invalid: string
+        missingExits: string
+        name: string
+        overwrite: string
+        save: string
+        saved: string
+        saveHint: string
+        saveTitle: string
+        summary: string
+      }
     }
     profiles: {
       components: {

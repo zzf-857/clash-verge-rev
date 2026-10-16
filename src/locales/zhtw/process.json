@@ -125,5 +125,27 @@
   },
   "notice": {
     "added": "已將 {{count}} 條規則加入「{{name}}」"
+  },
+  "preset": {
+    "button": "方案",
+    "empty": "還沒有儲存的方案",
+    "summary": "{{count}} 個分組",
+    "confirmApply": "再次點擊套用，將取代目前分組",
+    "delete": "刪除方案",
+    "save": "將目前設定存為方案…",
+    "export": "匯出到檔案…",
+    "import": "從檔案匯入…",
+    "saveTitle": "存為方案",
+    "name": "方案名稱",
+    "saveHint": "儲存所有分組、程序，以及各分組正在使用的出口節點",
+    "overwrite": "將覆寫同名方案",
+    "cancel": "取消",
+    "confirm": "儲存",
+    "saved": "已儲存方案「{{name}}」",
+    "applied": "已切換到方案「{{name}}」",
+    "imported": "已匯入方案「{{name}}」，在「方案」中點擊即可套用",
+    "exported": "已匯出到 {{path}}",
+    "invalid": "不是有效的分流方案檔案",
+    "missingExits": "{{count}} 個出口節點在目前訂閱中不存在，已保留原本的選擇"
   }
 }
