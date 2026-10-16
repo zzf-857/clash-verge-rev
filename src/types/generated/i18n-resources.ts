@@ -165,6 +165,25 @@ export interface TranslationResources {
           unknownTime: string
         }
       }
+      flow: {
+        connections: string
+        direct: string
+        emptyDesc: string
+        emptyTitle: string
+        modes: {
+          direct: string
+          global: string
+          rule: string
+        }
+        otherApps: string
+        otherNodes: string
+        timeout: string
+        tunOff: string
+        tunOn: string
+        unknownApp: string
+        viewCards: string
+        viewFlow: string
+      }
       page: {
         cards: {
           networkSettings: string

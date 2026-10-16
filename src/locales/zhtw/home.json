@@ -151,5 +151,24 @@
         "direct": "略過代理，直接連線至網際網路。"
       }
     }
+  },
+  "flow": {
+    "viewFlow": "流量圖",
+    "viewCards": "卡片檢視",
+    "tunOn": "TUN 已開啟",
+    "tunOff": "TUN 未開啟",
+    "modes": {
+      "rule": "規則模式",
+      "global": "全域模式",
+      "direct": "直連模式"
+    },
+    "connections": "{{count}} 個連線",
+    "otherApps": "其他 {{count}} 個應用",
+    "otherNodes": "其他 {{count}} 個節點",
+    "unknownApp": "未知程序",
+    "direct": "直連",
+    "timeout": "逾時",
+    "emptyTitle": "暫無活動連線",
+    "emptyDesc": "有應用連網時，這裡會即時顯示它經過哪個分組、從哪個節點出去"
   }
 }

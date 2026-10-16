@@ -1,4 +1,6 @@
 import {
+  AccountTreeRounded,
+  DashboardRounded,
   DnsOutlined,
   HelpOutlineRounded,
   HistoryEduOutlined,
@@ -19,6 +21,8 @@ import {
   Grid,
   IconButton,
   Skeleton,
+  ToggleButton,
+  ToggleButtonGroup,
   Tooltip,
 } from '@mui/material'
 import { useLockFn } from 'ahooks'
@@ -26,6 +30,7 @@ import { Suspense, lazy, useCallback, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { BasePage } from '@/components/base'
+import { FlowOverview } from '@/components/flow/flow-overview'
 import { ClashModeCard } from '@/components/home/clash-mode-card'
 import { CurrentProxyCard } from '@/components/home/current-proxy-card'
 import { EnhancedCard } from '@/components/home/enhanced-card'
@@ -69,6 +74,17 @@ export const preloadHomePageCards = () =>
     preloadClashInfoCard().catch(() => {}),
     preloadSystemInfoCard().catch(() => {}),
   ])
+
+type HomeView = 'flow' | 'cards'
+const HOME_VIEW_KEY = 'home-view'
+
+const readHomeView = (): HomeView => {
+  try {
+    return localStorage.getItem(HOME_VIEW_KEY) === 'cards' ? 'cards' : 'flow'
+  } catch {
+    return 'flow'
+  }
+}
 
 // 定义首页卡片设置接口
 interface HomeCardsSettings {
@@ -232,6 +248,16 @@ const HomeSettingsDialog = ({
 const HomePage = () => {
   const { t } = useTranslation()
   const { verge } = useVerge()
+  const [view, setView] = useState<HomeView>(readHomeView)
+  const changeView = (next: HomeView | null) => {
+    if (!next) return
+    setView(next)
+    try {
+      localStorage.setItem(HOME_VIEW_KEY, next)
+    } catch {
+      // Remembering the view is a convenience; the default still works.
+    }
+  }
   const { current, mutateProfiles } = useProfiles()
 
   // 设置弹窗的状态
@@ -322,9 +348,28 @@ const HomePage = () => {
   return (
     <BasePage
       title={t('home.page.title')}
-      contentStyle={{ padding: 2 }}
+      full={view === 'flow'}
+      contentStyle={view === 'flow' ? { height: '100%' } : { padding: 2 }}
       header={
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <ToggleButtonGroup
+            size="small"
+            exclusive
+            value={view}
+            onChange={(_, next: HomeView | null) => changeView(next)}
+            sx={{ mr: 1 }}
+          >
+            <ToggleButton value="flow" aria-label={t('home.flow.viewFlow')}>
+              <Tooltip title={t('home.flow.viewFlow')} arrow>
+                <AccountTreeRounded fontSize="small" />
+              </Tooltip>
+            </ToggleButton>
+            <ToggleButton value="cards" aria-label={t('home.flow.viewCards')}>
+              <Tooltip title={t('home.flow.viewCards')} arrow>
+                <DashboardRounded fontSize="small" />
+              </Tooltip>
+            </ToggleButton>
+          </ToggleButtonGroup>
           <Tooltip title={t('home.page.tooltips.lightweightMode')} arrow>
             <IconButton
               onClick={async () => await entry_lightweight_mode()}
@@ -347,11 +392,15 @@ const HomePage = () => {
         </Box>
       }
     >
-      <Grid container spacing={1.5} columns={{ xs: 6, sm: 6, md: 12 }}>
-        {criticalCards}
+      {view === 'flow' ? (
+        <FlowOverview />
+      ) : (
+        <Grid container spacing={1.5} columns={{ xs: 6, sm: 6, md: 12 }}>
+          {criticalCards}
 
-        {nonCriticalCards}
-      </Grid>
+          {nonCriticalCards}
+        </Grid>
+      )}
 
       {/* 首页设置弹窗 */}
       {settingsOpen && (

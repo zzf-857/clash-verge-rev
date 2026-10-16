@@ -151,5 +151,24 @@
         "direct": "Подключение напрямую без прокси"
       }
     }
+  },
+  "flow": {
+    "viewFlow": "Traffic flow",
+    "viewCards": "Cards",
+    "tunOn": "TUN on",
+    "tunOff": "TUN off",
+    "modes": {
+      "rule": "Rule mode",
+      "global": "Global mode",
+      "direct": "Direct mode"
+    },
+    "connections": "{{count}} connections",
+    "otherApps": "{{count}} more apps",
+    "otherNodes": "{{count}} more nodes",
+    "unknownApp": "Unknown process",
+    "direct": "Direct",
+    "timeout": "Timeout",
+    "emptyTitle": "No active connections",
+    "emptyDesc": "When an app goes online, this shows which group it takes and which node it leaves through"
   }
 }

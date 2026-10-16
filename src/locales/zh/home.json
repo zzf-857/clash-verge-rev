@@ -151,5 +151,24 @@
         "direct": "所有流量不经过代理节点，但经过 Clash 内核转发连接目标服务器，适用于需要通过内核进行分流的特定场景"
       }
     }
+  },
+  "flow": {
+    "viewFlow": "流量图",
+    "viewCards": "卡片视图",
+    "tunOn": "TUN 已开启",
+    "tunOff": "TUN 未开启",
+    "modes": {
+      "rule": "规则模式",
+      "global": "全局模式",
+      "direct": "直连模式"
+    },
+    "connections": "{{count}} 个连接",
+    "otherApps": "其他 {{count}} 个应用",
+    "otherNodes": "其他 {{count}} 个节点",
+    "unknownApp": "未知进程",
+    "direct": "直连",
+    "timeout": "超时",
+    "emptyTitle": "暂无活动连接",
+    "emptyDesc": "有应用联网时，这里会实时显示它经过哪个分组、从哪个节点出去"
   }
 }
